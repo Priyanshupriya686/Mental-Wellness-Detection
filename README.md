@@ -11,6 +11,25 @@
 
 ---
 
+## 📑 Table of Contents
+- [Overview](#-overview)
+- [Objectives](#-objectives)
+- [Key Features](#-key-features)
+- [Theoretical Foundation: WEMWBS-Based Wellness Scoring](#-theoretical-foundation-wemwbs-based-wellness-scoring)
+- [Feature Engineering & ML Pipeline](#-feature-engineering--ml-pipeline)
+- [Flask + ngrok Web Interface](#-flask--ngrok-web-interface)
+- [Quick Start Guide](#-quick-start-guide)
+- [Sample Output](#-sample-output)
+- [Future Enhancements](#-future-enhancements)
+- [Technologies & Libraries](#-technologies--libraries)
+- [Model Performance](#-model-performance)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
+- [Contributors](#-contributors)
+
+---
+
 ## 🌟 Overview
 
 Welcome to the **Mental Wellness Detection System** – an innovative AI-powered platform that transforms social media insights into personalized mental wellness assessments. By analyzing linguistic and behavioral patterns from Reddit and X (Twitter) posts, our system provides a comprehensive wellness score inspired by the Warwick–Edinburgh Mental Well-being Scale (WEMWBS).
@@ -243,6 +262,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [🔗 Live Demo](https://your-ngrok-link-here) | [📧 Contact](mailto:your-email@example.com) | [🐛 Report Issues](https://github.com/your-repo/issues)
 
 </div>
+
+---
+
+---
+
+## 👥 Contributors
+
+Thanks to all the wonderful people who have contributed to this project!
+
+<a href="https://github.com/Priyanshupriya686/Mental-Wellness-Detection/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Priyanshupriya686/Mental-Wellness-Detection" />
+</a>
 
 ---
 
