@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Wellness Detection</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark Mode Variables */
+            --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --container-bg: rgba(255, 255, 255, 0.1);
+            --container-backdrop: blur(15px);
+            --text-color: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --header-bg: linear-gradient(135deg, #ff6f61 0%, #de1d5a 100%);
+            --button-bg: linear-gradient(135deg, #ff6f61 0%, #de1d5a 100%);
+            --button-secondary-bg: linear-gradient(135deg, #2a2a3e, #3e3e5a);
+            --progress-fill-bg: linear-gradient(90deg, #ff6f61, #de1d5a);
+            --option-bg: rgba(255, 255, 255, 0.1);
+            --option-border: rgba(222, 29, 90, 0.2);
+            --option-hover-bg: rgba(222, 29, 90, 0.15);
+            --option-selected-bg: linear-gradient(135deg, rgba(222, 29, 90, 0.3), rgba(255, 111, 97, 0.3));
+            --dimension-border: #ff6f61;
+            --dimension-score: #ff6f61;
+            --chart-grid: rgba(255, 255, 255, 0.2);
+            --chart-label: #ffffff;
+            --recommendations-bg: rgba(232, 245, 233, 0.2);
+            --resources-bg: rgba(255, 243, 224, 0.2);
+        }
+
+        /* Light Mode Variables */
+        [data-theme="light"] {
+            --background: linear-gradient(135deg, #f0f2f5 0%, #e4e7eb 100%);
+            --container-bg: rgba(255, 255, 255, 0.9);
+            --container-backdrop: blur(10px);
+            --text-color: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --header-bg: linear-gradient(135deg, #ff8c7a 0%, #f06292 100%);
+            --button-bg: linear-gradient(135deg, #ff8c7a 0%, #f06292 100%);
+            --button-secondary-bg: linear-gradient(135deg, #6b7280, #9ca3af);
+            --progress-fill-bg: linear-gradient(90deg, #ff8c7a, #f06292);
+            --option-bg: rgba(255, 255, 255, 0.8);
+            --option-border: rgba(255, 111, 97, 0.3);
+            --option-hover-bg: rgba(255, 111, 97, 0.2);
+            --option-selected-bg: linear-gradient(135deg, rgba(255, 111, 97, 0.4), rgba(240, 98, 146, 0.4));
+            --dimension-border: #ff8c7a;
+            --dimension-score: #ff8c7a;
+            --chart-grid: rgba(0, 0, 0, 0.1);
+            --chart-label: #1a1a2e;
+            --recommendations-bg: rgba(232, 245, 233, 0.8);
+            --resources-bg: rgba(255, 243, 224, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            backdrop-filter: var(--container-backdrop);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .header {
+            background: var(--header-bg);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            transform: rotate(30deg);
+            transition: transform 1s ease;
+        }
+
+        .header:hover::before {
+            transform: rotate(45deg);
+        }
+
+        .header h1 {
+            font-size: 3.2em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            position: relative;
+            animation: fadeInDown 1s ease;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            font-weight: 400;
+            opacity: 0.9;
+            position: relative;
+            animation: fadeInUp 1s ease 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-toggle img {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+
+        .crisis-banner {
+            background: linear-gradient(90deg, #ff3e3e, #ff6b6b);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2em;
+            box-shadow: 0 4px 20px rgba(255, 59, 59, 0.5);
+            animation: pulse 2.5s infinite;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .welcome-screen, .assessment-screen, .report-screen {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .welcome-screen.active, .assessment-screen.active, .report-screen.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .welcome-content {
+            text-align: center;
+        }
+
+        .welcome-content h2 {
+            color: var(--text-color);
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            animation: fadeIn 1s ease;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-size: 1.2em;
+        }
+
+        .disclaimer {
+            background: rgba(255, 245, 204, 0.2);
+            border-left: 5px solid #ffb300;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .disclaimer:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .disclaimer h3 {
+            color: #ffb300;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .disclaimer p {
+            color: var(--text-color);
+            font-size: 1em;
+        }
+
+        .btn {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin: 15px;
+            box-shadow: 0 5px 20px rgba(222, 29, 90, 0.4);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.4s ease;
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(222, 29, 90, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--button-secondary-bg);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--progress-fill-bg);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(222, 29, 90, 0.7);
+        }
+
+        .question-container {
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .question-text {
+            font-size: 1.7em;
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-counter {
+            color: var(--dimension-score);
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: var(--option-bg);
+            border: 2px solid var(--option-border);
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            color: var(--text-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .option:hover {
+            border-color: var(--dimension-score);
+            background: var(--option-hover-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(222, 29, 90, 0.3);
+        }
+
+        .option.selected {
+            border-color: var(--dimension-score);
+            background: var(--option-selected-bg);
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(222, 29, 90, 0.4);
+        }
+
+        .scale-options {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .scale-option {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+            padding: 18px;
+            background: var(--option-bg);
+            border: 2px solid var(--option-border);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .scale-option:hover {
+            border-color: var(--dimension-score);
+            background: var(--option-hover-bg);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(222, 29, 90, 0.3);
+        }
+
+        .scale-option.selected {
+            border-color: var(--dimension-score);
+            background: var(--button-bg);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(222, 29, 90, 0.5);
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 1em;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .report-header h2 {
+            color: var(--text-color);
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            animation: fadeIn 1s ease;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .overall-score {
+            background: var(--button-bg);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(222, 29, 90, 0.5);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .overall-score h3 {
+            font-size: 1.9em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .score-value {
+            font-size: 5.5em;
+            font-weight: 800;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-label {
+            font-size: 1.5em;
+            opacity: 0.9;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .dimensions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dimension-card {
+            background: var(--option-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid var(--dimension-border);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dimension-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(222, 29, 90, 0.4);
+        }
+
+        .dimension-card h4 {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .dimension-score {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: var(--dimension-score);
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            background: var(--option-bg);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease;
+        }
+
+        .recommendations {
+            background: var(--recommendations-bg);
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 40px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .recommendations h3 {
+            color: #4caf50;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.7em;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
+            padding: 15px 0;
+            color: var(--text-color);
+            line-height: 1.8;
+            border-bottom: 1px solid rgba(200, 230, 201, 0.3);
+            font-size: 1.1em;
+        }
+
+        .recommendations li:before {
+            content: "🌟 ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .resources {
+            background: var(--resources-bg);
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 30px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .resources h3 {
+            color: #ffb300;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.7em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            .scale-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .dimensions {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 15px 30px;
+                font-size: 1em;
+            }
+
+            .question-text {
+                font-size: 1.4em;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="crisis-banner">
+        🆘 Crisis Support: National Suicide Prevention Lifeline: 988 | Crisis Text Line: Text "HELLO" to 741741
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Mental Wellness Detection</h1>
+            <p>A cutting-edge AI-powered mental health assessment tool</p>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <img id="themeIcon" src="https://img.icons8.com/ios-glyphs/30/ffffff/sun.png" alt="Toggle Theme">
+            </button>
+        </div>
+
+        <div class="content">
+            <div class="welcome-screen active">
+                <div class="welcome-content">
+                    <h2>Embark on Your Wellness Journey</h2>
+                    <p>Explore your mental wellbeing through a thoughtfully curated set of questions. This immersive assessment takes about 10-15 minutes.</p>
+                    
+                    <div class="disclaimer">
+                        <h3>⚠️ Important Disclaimer</h3>
+                        <p><strong>This tool is not a medical diagnosis.</strong> It is designed for educational and self-awareness purposes only. Results are not a substitute for professional medical advice. Consult a mental health professional for concerns.</p>
+                    </div>
+
+                    <p><strong>We'll explore:</strong></p>
+                    <p>• Mood & Emotional Patterns<br>
+                    • Anxiety & Stress Levels<br>
+                    • Sleep & Energy Dynamics<br>
+                    • Social Connections<br>
+                    • Digital Habits</p>
+
+                    <p style="margin-top: 30px;"><strong>Your responses are private, stored only in your browser during this session.</strong></p>
+
+                    <button class="btn" onclick="startAssessment()">Begin Your Journey</button>
+                </div>
+            </div>
+
+            <div class="assessment-screen">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="question-counter" id="questionCounter"></div>
+                
+                <div class="question-container" id="questionContainer"></div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn" style="display: none;">Previous</button>
+                    <button class="btn" onclick="nextQuestion()" id="nextBtn">Next</button>
+                </div>
+            </div>
+
+            <div class="report-screen">
+                <div class="report-header">
+                    <h2>Your Wellness Insights</h2>
+                    <p>Generated on <span id="reportDate"></span></p>
+                </div>
+
+                <div class="overall-score">
+                    <h3>Overall Wellness Score</h3>
+                    <div class="score-value" id="overallScore">--</div>
+                    <div class="score-label" id="overallLabel">--</div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+
+                <div class="dimensions" id="dimensionsContainer"></div>
+
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+
+                <div class="recommendations" id="recommendationsContainer"></div>
+
+                <div class="resources">
+                    <h3>📞 Support Resources</h3>
+                    <p><strong>Immediate help:</strong></p>
+                    <ul>
+                        <li>National Suicide Prevention Lifeline: <strong>988</strong></li>
+                        <li>Crisis Text Line: Text <strong>"HELLO"</strong> to <strong>741741</strong></li>
+                        <li>SAMHSA National Helpline: <strong>1-800-662-4357</strong></li>
+                    </ul>
+                    <p style="margin-top: 20px;"><strong>Consider consulting:</strong> A licensed therapist, psychiatrist, or your primary care physician for tailored support.</p>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="btn" onclick="restartAssessment()">Restart Assessment</button>
+                    <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        try {
+            // Theme Toggle Functionality
+            function toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                const themeIcon = document.getElementById('themeIcon');
+                themeIcon.src = newTheme === 'dark' 
+                    ? 'https://img.icons8.com/ios-glyphs/30/ffffff/sun.png'
+                    : 'https://img.icons8.com/ios-glyphs/30/000000/moon-symbol.png';
+                themeIcon.alt = `Switch to ${newTheme === 'dark' ? 'light' : 'dark'} mode`;
+            }
+
+            // Load saved theme
+            window.addEventListener('load', () => {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                const themeIcon = document.getElementById('themeIcon');
+                themeIcon.src = savedTheme === 'dark' 
+                    ? 'https://img.icons8.com/ios-glyphs/30/ffffff/sun.png'
+                    : 'https://img.icons8.com/ios-glyphs/30/000000/moon-symbol.png';
+                themeIcon.alt = `Switch to ${savedTheme === 'dark' ? 'light' : 'dark'} mode`;
+            });
+
+            const questions = [
+                { id: 1, category: "demographic", text: "What is your age range?", type: "choice", options: ["18-25", "26-35", "36-45", "46-55", "56+"] },
+                { id: 2, category: "demographic", text: "What is your current relationship status?", type: "choice", options: ["Single", "In a relationship", "Married", "Divorced", "Widowed", "Prefer not to say"] },
+                { id: 3, category: "digital", text: "On average, how many hours per day do you spend on social media?", type: "choice", options: ["Less than 1 hour", "1-2 hours", "2-3 hours", "3-4 hours", "4-5 hours", "More than 5 hours"] },
+                { id: 4, category: "digital", text: "How often do you use social media without a specific purpose?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
+                { id: 5, category: "attention", text: "How often do you get distracted by social media when busy?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
+                { id: 6, category: "digital", text: "Do you feel restless if you haven't used social media in a while?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"] },
+                { id: 7, category: "attention", text: "On a scale of 1 to 5, how easily distracted are you?", type: "scale", scale: 5, labels: ["Not easily", "Somewhat", "Moderately", "Very", "Extremely"] },
+                { id: 8, category: "anxiety", text: "On a scale of 1 to 5, how much are you bothered by worries?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"] },
+                { id: 9, category: "functioning", text: "Do you find it difficult to concentrate on things?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"] },
+                { id: 10, category: "social", text: "How often do you compare yourself to others on social media?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
+                { id: 11, category: "social", text: "How do these comparisons generally make you feel?", type: "scale", scale: 5, labels: ["Very positive", "Positive", "Neutral", "Negative", "Very negative"] },
+                { id: 12, category: "validation", text: "How often do you seek validation from social media?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
+                { id: 13, category: "depression", text: "How often do you feel depressed or down?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
+                { id: 14, category: "interest", text: "How frequently does your interest in daily activities fluctuate?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
+                { id: 15, category: "sleep", text: "How often do you face issues regarding sleep?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
+                { id: 16, category: "energy", text: "How would you rate your energy levels throughout the day?", type: "scale", scale: 5, labels: ["Very low", "Low", "Moderate", "High", "Very high"] },
+                { id: 17, category: "social", text: "How satisfied are you with your social connections?", type: "scale", scale: 5, labels: ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"] },
+                { id: 18, category: "stress", text: "How often do you feel overwhelmed by daily responsibilities?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
+                { id: 19, category: "coping", text: "Do you have healthy coping mechanisms for stress?", type: "scale", scale: 5, labels: ["Not at all", "Few", "Some", "Many", "Excellent"] },
+                { id: 20, category: "support", text: "Do you feel you have adequate support when facing difficulties?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Mostly", "Completely"] }
+            ];
+
+            let currentQuestion = 0;
+            let responses = {};
+            let assessmentData = { startTime: null, endTime: null, responses: {}, scores: {} };
+
+            function startAssessment() {
+                try {
+                    document.querySelector('.welcome-screen').classList.remove('active');
+                    document.querySelector('.assessment-screen').classList.add('active');
+                    assessmentData.startTime = new Date();
+                    currentQuestion = 0;
+                    loadQuestion();
+                } catch (e) {
+                    console.error('Error in startAssessment:', e);
+                }
+            }
+
+            function loadQuestion() {
+                try {
+                    const q = questions[currentQuestion];
+                    if (!q) throw new Error('Invalid question index');
+                    const container = document.getElementById('questionContainer');
+                    if (!container) throw new Error('Question container not found');
+
+                    document.getElementById('questionCounter').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+                    document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+                    let html = `<div class="question-text">${q.text}</div>`;
+
+                    if (q.type === 'choice') {
+                        html += '<div class="options">';
+                        q.options.forEach((opt, i) => {
+                            const sel = responses[q.id] === i ? 'selected' : '';
+                            html += `<div class="option ${sel}" data-qid="${q.id}" data-optidx="${i}">${opt}</div>`;
+                        });
+                        html += '</div>';
+                    } else if (q.type === 'scale') {
+                        html += '<div class="scale-options">';
+                        for (let i = 1; i <= q.scale; i++) {
+                            const sel = responses[q.id] === i ? 'selected' : '';
+                            html += `<div class="scale-option ${sel}" data-qid="${q.id}" data-val="${i}">${i}</div>`;
+                        }
+                        html += '</div>';
+                        html += `<div class="scale-labels"><span>${q.labels[0]}</span><span>${q.labels[q.labels.length - 1]}</span></div>`;
+                    }
+
+                    container.innerHTML = html;
+
+                    document.querySelectorAll('.option').forEach((el, i) => {
+                        el.addEventListener('click', () => selectOption(parseInt(el.dataset.qid), parseInt(el.dataset.optidx)));
+                    });
+
+                    document.querySelectorAll('.scale-option').forEach((el, i) => {
+                        el.addEventListener('click', () => selectScale(parseInt(el.dataset.qid), parseInt(el.dataset.val)));
+                    });
+
+                    document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
+                    document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'Generate Report' : 'Next';
+                } catch (e) {
+                    console.error('Error in loadQuestion:', e);
+                }
+            }
+
+            function selectOption(qId, optIdx) {
+                try {
+                    responses[qId] = optIdx;
+                    document.querySelectorAll('.option').forEach((el, i) => {
+                        el.classList.toggle('selected', i === optIdx);
+                    });
+                } catch (e) {
+                    console.error('Error in selectOption:', e);
+                }
+            }
+
+            function selectScale(qId, val) {
+                try {
+                    responses[qId] = val;
+                    document.querySelectorAll('.scale-option').forEach((el, i) => {
+                        el.classList.toggle('selected', i + 1 === val);
+                    });
+                } catch (e) {
+                    console.error('Error in selectScale:', e);
+                }
+            }
+
+            function nextQuestion() {
+                try {
+                    const currentQId = questions[currentQuestion].id;
+                    if (responses[currentQId] === undefined || responses[currentQId] === null) {
+                        alert('Please answer the question before proceeding.');
+                        return;
+                    }
+
+                    if (currentQuestion < questions.length - 1) {
+                        currentQuestion++;
+                        loadQuestion();
+                    } else {
+                        generateReport();
+                    }
+                } catch (e) {
+                    console.error('Error in nextQuestion:', e);
+                }
+            }
+
+            function previousQuestion() {
+                try {
+                    if (currentQuestion > 0) {
+                        currentQuestion--;
+                        loadQuestion();
+                    }
+                } catch (e) {
+                    console.error('Error in previousQuestion:', e);
+                }
+            }
+
+            function calculateScores() {
+                try {
+                    const deprQ = [13, 14, 16];
+                    const deprSum = deprQ.reduce((s, id) => s + (responses[id] || 0), 0);
+                    assessmentData.scores.depression = Math.round((deprSum / (deprQ.length * 5)) * 100);
+
+                    const anxQ = [8, 18];
+                    const anxSum = anxQ.reduce((s, id) => s + (responses[id] || 0), 0);
+                    assessmentData.scores.anxiety = Math.round((anxSum / (anxQ.length * 5)) * 100);
+
+                    assessmentData.scores.sleep = Math.round(((6 - (responses[15] || 0)) / 5) * 100);
+
+                    const socQ = [10, 11, 17, 20];
+                    const socSum = socQ.reduce((s, id) => {
+                        let v = responses[id] || 0;
+                        if (id === 17 || id === 20) v = 6 - v;
+                        return s + v;
+                    }, 0);
+                    assessmentData.scores.social = Math.round((socSum / (socQ.length * 5)) * 100);
+
+                    const funcQ = [7, 9, 19];
+                    const funcSum = funcQ.reduce((s, id) => {
+                        let v = responses[id] || 0;
+                        if (id === 19) v = 6 - v;
+                        return s + v;
+                    }, 0);
+                    assessmentData.scores.functioning = Math.round((funcSum / (funcQ.length * 5)) * 100);
+
+                    const digQ = [3, 4, 5, 6, 12];
+                    const digSum = digQ.reduce((s, id) => s + (responses[id] || 0), 0);
+                    assessmentData.scores.digital = Math.round((digSum / (digQ.length * 5)) * 100);
+
+                    const strQ = [18, 19];
+                    const strSum = strQ.reduce((s, id) => {
+                        let v = responses[id] || 0;
+                        if (id === 19) v = 6 - v;
+                        return s + v;
+                    }, 0);
+                    assessmentData.scores.stress = Math.round((strSum / (strQ.length * 5)) * 100);
+
+                    const avgNeg = (assessmentData.scores.depression + assessmentData.scores.anxiety +
+                                    assessmentData.scores.stress + (100 - assessmentData.scores.sleep) +
+                                    assessmentData.scores.digital + assessmentData.scores.functioning) / 6;
+                    assessmentData.scores.overall = Math.round(100 - avgNeg);
+                } catch (e) {
+                    console.error('Error in calculateScores:', e);
+                }
+            }
+
+            function generateReport() {
+                try {
+                    assessmentData.endTime = new Date();
+                    assessmentData.responses = responses;
+                    calculateScores();
+                    document.querySelector('.assessment-screen').classList.remove('active');
+                    document.querySelector('.report-screen').classList.add('active');
+                    displayReport();
+                } catch (e) {
+                    console.error('Error in generateReport:', e);
+                }
+            }
+
+            function displayReport() {
+                try {
+                    if (!window.Chart) throw new Error('Chart.js not loaded');
+                    const s = assessmentData.scores;
+
+                    document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+
+                    document.getElementById('overallScore').textContent = s.overall || '--';
+                    const lbl = s.overall >= 70 ? 'Good Wellness' : s.overall >= 50 ? 'Moderate Wellness' : 'Needs Attention';
+                    document.getElementById('overallLabel').textContent = lbl;
+
+                    const dims = [
+                        { name: 'Depression', score: 100 - (s.depression || 0), icon: '😔' },
+                        { name: 'Anxiety', score: 100 - (s.anxiety || 0), icon: '😰' },
+                        { name: 'Sleep Quality', score: s.sleep || 0, icon: '😴' },
+                        { name: 'Social Connection', score: 100 - (s.social || 0), icon: '👥' },
+                        { name: 'Daily Functioning', score: 100 - (s.functioning || 0), icon: '⚡' },
+                        { name: 'Digital Wellbeing', score: 100 - (s.digital || 0), icon: '📱' },
+                        { name: 'Stress Management', score: 100 - (s.stress || 0), icon: '😓' }
+                    ];
+
+                    let dimsHTML = '';
+                    dims.forEach(d => {
+                        dimsHTML += `
+                            <div class="dimension-card">
+                                <h4>${d.icon} ${d.name}</h4>
+                                <div class="dimension-score">${d.score}/100</div>
+                                <p>${d.score >= 70 ? 'Strong' : d.score >= 50 ? 'Moderate' : 'Needs Support'}</p>
+                            </div>`;
+                    });
+                    document.getElementById('dimensionsContainer').innerHTML = dimsHTML;
+
+                    const radarCtx = document.getElementById('radarChart').getContext('2d');
+                    new Chart(radarCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: dims.map(d => d.name),
+                            datasets: [{
+                                label: 'Your Wellness Dimensions',
+                                data: dims.map(d => d.score),
+                                backgroundColor: 'rgba(222, 29, 90, 0.3)',
+                                borderColor: 'rgba(222, 29, 90, 1)',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            scales: { 
+                                r: { 
+                                    beginAtZero: true, 
+                                    max: 100,
+                                    pointLabels: { font: { size: 14, family: 'Inter' } },
+                                    grid: { color: var(--chart-grid) },
+                                    angleLines: { color: var(--chart-grid) }
+                                }
+                            },
+                            plugins: { 
+                                legend: { 
+                                    display: true, 
+                                    labels: { font: { size: 14, family: 'Inter' }, color: var(--chart-label) } 
+                                } 
+                            }
+                        }
+                    });
+
+                    const barCtx = document.getElementById('barChart').getContext('2d');
+                    new Chart(barCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: dims.map(d => d.name),
+                            datasets: [{
+                                label: 'Wellness Scores',
+                                data: dims.map(d => d.score),
+                                backgroundColor: 'rgba(222, 29, 90, 0.7)',
+                                borderColor: 'rgba(222, 29, 90, 1)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            scales: { 
+                                y: { 
+                                    beginAtZero: true, 
+                                    max: 100,
+                                    grid: { color: var(--chart-grid) },
+                                    ticks: { color: var(--chart-label) }
+                                },
+                                x: { 
+                                    ticks: { color: var(--chart-label) }
+                                }
+                            },
+                            plugins: { 
+                                legend: { display: false } 
+                            }
+                        }
+                    });
+
+                    const recs = generateRecommendations(s, dims);
+                    document.getElementById('recommendationsContainer').innerHTML = recs;
+                } catch (e) {
+                    console.error('Error in displayReport:', e);
+                }
+            }
+
+            function generateRecommendations(scores, dims) {
+                try {
+                    let html = '<h3>Personalized Wellness Tips</h3><ul>';
+
+                    if (scores.overall < 50) {
+                        html += '<li>Your wellness score suggests professional support could be beneficial. Reach out to a mental health expert.</li>';
+                    }
+
+                    dims.forEach(d => {
+                        if (d.score < 50) {
+                            if (d.name === 'Depression') html += '<li>Track your mood daily and engage in activities that spark joy. Consider therapy.</li>';
+                            if (d.name === 'Anxiety') html += '<li>Practice calming techniques like deep breathing, meditation, or yoga.</li>';
+                            if (d.name === 'Sleep Quality') html += '<li>Create a soothing bedtime routine and limit screens before sleep.</li>';
+                            if (d.name === 'Social Connection') html += '<li>Connect with loved ones or join communities that share your passions.</li>';
+                            if (d.name === 'Daily Functioning') html += '<li>Organize tasks into manageable steps and set achievable goals.</li>';
+                            if (d.name === 'Digital Wellbeing') html += '<li>Set social media boundaries with app timers and regular digital detoxes.</li>';
+                            if (d.name === 'Stress Management') html += '<li>Incorporate exercise, mindfulness, or creative hobbies to manage stress.</li>';
+                        }
+                    });
+
+                    html += '<li>Daily movement (20-30 minutes) can boost your mental wellbeing.</li>';
+                    html += '<li>Eat balanced meals and stay hydrated for optimal mental clarity.</li>';
+                    html += '<li>Practice gratitude by reflecting on three positive moments daily.</li>';
+                    html += '</ul>';
+
+                    return html;
+                } catch (e) {
+                    console.error('Error in generateRecommendations:', e);
+                    return '<h3>Personalized Wellness Tips</h3><p>Error generating recommendations. Please try again.</p>';
+                }
+            }
+
+            function restartAssessment() {
+                try {
+                    currentQuestion = 0;
+                    responses = {};
+                    assessmentData = { startTime: null, endTime: null, responses: {}, scores: {} };
+                    document.querySelector('.report-screen').classList.remove('active');
+                    document.querySelector('.welcome-screen').classList.add('active');
+                } catch (e) {
+                    console.error('Error in restartAssessment:', e);
+                }
+            }
+
+            window.addEventListener('load', () => {
+                if (!window.Chart) {
+                    console.error('Chart.js failed to load. Please check the script source.');
+                }
+            });
+        } catch (e) {
+            console.error('Global error:', e);
+        }
+    </script>
+</body>
+</html>
