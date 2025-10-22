@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Wellness Detection</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Mental Wellness Detection System</title>
     <style>
         * {
             margin: 0;
@@ -13,124 +11,915 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --secondary: #a78bfa;
+            --accent: #c084fc;
+            --bg-light: #faf5ff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f7ecd5;
-            color: #222;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
             overflow-x: hidden;
+            background: #fff;
         }
 
-        /* Landing Page Styles */
-        .landing-page {
-            min-height: 100vh;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
             display: flex;
-            flex-direction: column;
-            animation: fadeIn 1s ease;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .landing-page.hidden {
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .explore-btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .explore-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Page Sections */
+        .page-section {
             display: none;
         }
 
-        header {
-            text-align: center;
-            padding: 3rem 1rem;
+        .page-section.active {
+            display: block;
         }
 
-        h1 {
-            font-size: 2rem;
-            letter-spacing: 3px;
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 5% 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            color: white;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 0.9rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .hero-feature {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .hero-feature-icon {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        .crisis-banner {
-            background: linear-gradient(90deg, #ff3e3e, #ff6b6b);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.95em;
+        .hero-feature h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
         }
 
-        .cards-container {
+        .hero-feature p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            font-size: 1.05rem;
+        }
+
+        /* Stats Section */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
             padding: 2rem;
-            justify-items: center;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stats-description {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            color: white;
+            line-height: 1.8;
+        }
+
+        /* Overview Cards */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .overview-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #f3f4f6;
+            transition: all 0.3s;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.15);
+        }
+
+        .overview-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(167, 139, 250, 0.1));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .overview-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-dark);
+        }
+
+        .overview-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .overview-text {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--bg-light);
+            padding: 2.5rem;
+            border-radius: 15px;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .wellness-card {
-            width: 240px;
-            height: 240px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-weight: 500;
-            font-size: 1rem;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(40px);
-            animation: floatIn 1s forwards;
-            transition: transform 0.3s ease;
-            padding: 20px;
-        }
-
-        .wellness-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .wellness-card .icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .card-purple { background: #d7b9e4; animation-delay: 0.2s; }
-        .card-gold { background: #d1a23f; animation-delay: 0.4s; }
-        .card-orange { background: #e45b26; animation-delay: 0.6s; }
-        .card-coral { background: #e45b26; animation-delay: 0.8s; }
-        .card-blue { background: #b7d4ec; animation-delay: 1s; }
-        .card-cream { background: #eedcb3; animation-delay: 1.2s; }
-
-        .start-button {
-            display: block;
-            margin: 2rem auto;
-            padding: 1rem 3rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 50px;
-            background: linear-gradient(90deg, #e7b21a, #c3840e);
-            color: #fff;
-            cursor: pointer;
-            animation: pulse 2s infinite;
-            transition: transform 0.3s ease;
-            letter-spacing: 1px;
-        }
-
-        .start-button:hover {
-            transform: scale(1.05);
-        }
-
-        .disclaimer-box {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background: rgba(255, 243, 205, 0.6);
+        .feature-card {
+            background: white;
+            padding: 2rem;
             border-radius: 15px;
-            text-align: center;
+            border: 2px solid #f3f4f6;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.15);
+            border-color: var(--primary);
+        }
+
+        .feature-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-light);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(167, 139, 250, 0.1));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Architecture Timeline */
+        .architecture-timeline {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+        }
+
+        .timeline-number {
+            min-width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 3px solid var(--primary);
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .timeline-content h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .timeline-content p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tech-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #f3f4f6;
+        }
+
+        .tech-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f3f4f6;
             font-size: 0.9rem;
         }
 
-        /* Assessment Page Styles */
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-note {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-light);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        /* Sample Output */
+        .sample-output {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            border: 2px solid #f3f4f6;
+            overflow: hidden;
+        }
+
+        .output-header {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-bottom: 2px solid #f3f4f6;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .output-header-item {
+            text-align: left;
+        }
+
+        .output-header-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .output-header-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .output-score {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .output-score-label {
+            font-size: 0.85rem;
+            color: #065f46;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .output-score-value {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #047857;
+            margin-bottom: 0.5rem;
+        }
+
+        .output-score-desc {
+            color: #065f46;
+            font-size: 0.95rem;
+        }
+
+        .output-breakdown {
+            padding: 2rem;
+        }
+
+        .breakdown-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .breakdown-item {
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .breakdown-bar {
+            height: 8px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+
+        .output-insights {
+            padding: 2rem;
+            background: #f0fdf4;
+            border-top: 2px solid #f3f4f6;
+        }
+
+        .output-insights h4 {
+            color: #065f46;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .output-insights ul {
+            list-style: none;
+        }
+
+        .output-insights li {
+            padding: 0.5rem 0;
+            color: #047857;
+            font-size: 0.9rem;
+        }
+
+        .output-insights li::before {
+            content: "✓ ";
+            margin-right: 0.5rem;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .output-recommendations {
+            padding: 2rem;
+            background: #eff6ff;
+        }
+
+        .output-recommendations h4 {
+            color: #1e40af;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .output-recommendations ul {
+            list-style: none;
+        }
+
+        .output-recommendations li {
+            padding: 0.5rem 0;
+            color: #1e3a8a;
+            font-size: 0.9rem;
+        }
+
+        .output-recommendations li::before {
+            content: "• ";
+            margin-right: 0.5rem;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .achievements-box {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(124, 58, 237, 0.1);
+        }
+
+        .achievements-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .achievements-list {
+            list-style: none;
+        }
+
+        .achievements-list li {
+            padding: 0.8rem 0;
+            padding-left: 2rem;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .achievements-list li::before {
+            content: "🌟";
+            position: absolute;
+            left: 0;
+        }
+
+        /* Challenges Section */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .challenges-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .challenge-item, .learning-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            border-left: 4px solid #ef4444;
+        }
+
+        .learning-item {
+            border-left-color: #10b981;
+        }
+
+        .challenge-title, .learning-title {
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .learning-title {
+            color: #10b981;
+        }
+
+        .challenge-problem, .learning-desc {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .challenge-solution {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .learning-item li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Future Enhancements */
+        .enhancements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        .enhancement-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #f3f4f6;
+            position: relative;
+        }
+
+        .enhancement-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-planned {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .enhancement-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+            padding-right: 4rem;
+        }
+
+        .enhancement-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .enhancement-note {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background: #fef3c7;
+            border-radius: 10px;
+            border-left: 4px solid #f59e0b;
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 80px 5%;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .disclaimer-text {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            background: #1f2937;
+            color: white;
+            padding: 60px 5% 30px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Assessment Page */
         .assessment-page {
             display: none;
             min-height: 100vh;
-            background: #f7ecd5;
+            padding: 100px 5% 60px;
+            background: linear-gradient(to bottom, white 0%, var(--bg-light) 100%);
         }
 
         .assessment-page.active {
@@ -138,156 +927,96 @@
         }
 
         .assessment-container {
-            max-width: 900px;
+            max-width: 750px;
             margin: 0 auto;
-            padding: 2rem;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.15);
+            border: 2px solid rgba(124, 58, 237, 0.1);
         }
 
         .assessment-header {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 20px;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .assessment-header h2 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
         .progress-bar {
             width: 100%;
             height: 10px;
-            background: rgba(0, 0, 0, 0.1);
+            background: #f3f4f6;
             border-radius: 10px;
-            margin: 2rem 0;
             overflow: hidden;
+            margin: 1.5rem 0;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             transition: width 0.5s ease;
         }
 
         .question-counter {
-            color: #6a11cb;
+            font-size: 0.9rem;
+            color: var(--primary);
             font-weight: 700;
             margin-bottom: 1rem;
-            font-size: 1.1rem;
         }
 
         .question-text {
-            font-size: 1.4rem;
-            color: #222;
-            margin-bottom: 2rem;
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
             font-weight: 600;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 0.9rem;
         }
 
         .option {
             background: white;
-            border: 2px solid #ddd;
-            padding: 18px;
-            border-radius: 15px;
+            border: 2px solid #f3f4f6;
+            padding: 1rem;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.05rem;
+            transition: all 0.3s;
+            font-size: 0.95rem;
         }
 
         .option:hover {
-            border-color: #6a11cb;
-            background: #f0f4ff;
-            transform: translateX(5px);
+            border-color: var(--primary);
+            background: var(--bg-light);
         }
 
         .option.selected {
-            border-color: #6a11cb;
-            background: linear-gradient(135deg, rgba(106, 17, 203, 0.2), rgba(37, 117, 252, 0.2));
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(167, 139, 250, 0.1));
             font-weight: 600;
-        }
-
-        .scale-options {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .scale-option {
-            flex: 1;
-            text-align: center;
-            padding: 18px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .scale-option:hover {
-            border-color: #6a11cb;
-            transform: scale(1.05);
-        }
-
-        .scale-option.selected {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-            font-weight: 700;
-            border-color: #6a11cb;
-        }
-
-        .scale-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #666;
         }
 
         .navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
-        .btn {
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        /* Report Page Styles */
+        /* Report Page */
         .report-page {
             display: none;
             min-height: 100vh;
-            background: #f7ecd5;
-            padding: 2rem;
+            padding: 100px 5% 60px;
+            background: linear-gradient(to bottom, white 0%, var(--bg-light) 100%);
         }
 
         .report-page.active {
@@ -295,536 +1024,992 @@
         }
 
         .report-container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
-            border-radius: 30px;
-            padding: 3rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.15);
+            border: 2px solid rgba(124, 58, 237, 0.1);
         }
 
-        .report-header {
+        .score-display {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            padding: 2.5rem;
+            border-radius: 18px;
             text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .report-header h2 {
-            font-size: 2.5rem;
-            color: #222;
-            margin-bottom: 0.5rem;
-        }
-
-        .overall-score {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-            padding: 3rem;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .score-value {
-            font-size: 5rem;
-            font-weight: 700;
-        }
-
-        .score-label {
-            font-size: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .dimensions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 3rem;
-        }
-
-        .dimension-card {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 15px;
-            border-left: 5px solid #6a11cb;
-        }
-
-        .dimension-card h4 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: #222;
-        }
-
-        .dimension-score {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #6a11cb;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
             margin-bottom: 2rem;
         }
 
-        .recommendations {
-            background: #e8f5e9;
-            padding: 2rem;
-            border-radius: 20px;
-            margin: 2rem 0;
+        .score-label {
+            font-size: 0.9rem;
+            color: #065f46;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .recommendations h3 {
-            color: #2e7d32;
-            margin-bottom: 1rem;
+        .score-value-large {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
-        .recommendations ul {
+        .insights-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 1.8rem;
+            border-radius: 16px;
+            border-left: 5px solid #10b981;
+            margin-bottom: 1.5rem;
+        }
+
+        .insights-box h4 {
+            color: #065f46;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .insights-box ul {
             list-style: none;
-            padding: 0;
+            color: #047857;
         }
 
-        .recommendations li {
-            padding: 10px 0;
-            color: #1b5e20;
-            border-bottom: 1px solid #c8e6c9;
+        .insights-box li {
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
-        .recommendations li:before {
-            content: "✨ ";
-            margin-right: 10px;
+        .insights-box li::before {
+            content: "✓ ";
+            margin-right: 0.7rem;
+            font-weight: bold;
+            color: #10b981;
         }
 
-        .resources {
-            background: #fff3e0;
-            padding: 2rem;
-            border-radius: 20px;
-            margin: 2rem 0;
+        .recommendations-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 1.8rem;
+            border-radius: 16px;
+            border-left: 5px solid #3b82f6;
+            margin-bottom: 1.5rem;
         }
 
-        .resources h3 {
-            color: #e65100;
-            margin-bottom: 1rem;
+        .recommendations-box h4 {
+            color: #1e40af;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .recommendations-box ul {
+            list-style: none;
+            color: #1e3a8a;
         }
 
-        @keyframes floatIn {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+        .recommendations-box li {
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(231, 178, 26, 0.6); }
-            70% { box-shadow: 0 0 0 15px rgba(231, 178, 26, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(231, 178, 26, 0); }
+        .recommendations-box li::before {
+            content: "• ";
+            margin-right: 0.7rem;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .disclaimer-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border-left: 5px solid #f59e0b;
+            margin-bottom: 1.5rem;
+        }
+
+        .disclaimer-box h4 {
+            color: #92400e;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .disclaimer-box p {
+            color: #78350f;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 968px) {
+            .hero-features, .stats-grid, .overview-grid, .feature-grid, .results-grid, .enhancements-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .cards-container {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-features, .stats-grid, .overview-grid, .feature-grid, .tech-grid, .results-grid, .challenges-grid, .enhancements-grid {
                 grid-template-columns: 1fr;
             }
 
-            .scale-options {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
                 flex-direction: column;
             }
 
-            .dimensions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 1.5rem;
+            .score-value-large {
+                font-size: 3rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="crisis-banner">
-        🆘 Crisis Support: National Suicide Prevention Lifeline: 988 | Crisis Text Line: Text "HELLO" to 741741
-    </div>
-
-    <!-- Landing Page -->
-    <div class="landing-page" id="landingPage">
-        <header>
-            <h1>🌿 Mental Wellness Detection</h1>
-            <p>Your responses are anonymous and saved only for this session.</p>
-        </header>
-
-        <div class="cards-container">
-            <div class="wellness-card card-purple">
-                <div class="icon">🌸</div>
-                <div>Depression & Mood Patterns</div>
-            </div>
-            <div class="wellness-card card-gold">
-                <div class="icon">🌿</div>
-                <div>Anxiety Levels</div>
-            </div>
-            <div class="wellness-card card-orange">
-                <div class="icon">🌺</div>
-                <div>Stress & Daily Functioning</div>
-            </div>
-            <div class="wellness-card card-coral">
-                <div class="icon">🌙</div>
-                <div>Sleep Quality</div>
-            </div>
-            <div class="wellness-card card-blue">
-                <div class="icon">🧘</div>
-                <div>Social Connections</div>
-            </div>
-            <div class="wellness-card card-cream">
-                <div class="icon">🪔</div>
-                <div>Digital Wellbeing</div>
-            </div>
+    <nav>
+        <div class="logo" onclick="showHome()">
+            <span class="logo-icon">🧠</span>
+            Mental Wellness Detection
         </div>
+        <ul class="nav-links">
+            <li><a onclick="scrollToSection('overview')">Overview</a></li>
+            <li><a onclick="scrollToSection('features')">Features</a></li>
+            <li><a onclick="scrollToSection('architecture')">Architecture</a></li>
+            <li><a onclick="scrollToSection('technologies')">Technologies</a></li>
+            <li><a onclick="scrollToSection('results')">Results</a></li>
+        </ul>
+        <button class="explore-btn" onclick="startAssessment()">Explore</button>
+    </nav>
 
-        <button class="start-button" onclick="startAssessment()">Start Assessment</button>
+    <div id="homePage" class="page-section active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>🔬</span>
+                    AI-Powered Mental Health System
+                </div>
+                <h1>Mental Wellness Detection System</h1>
+                <p>Leveraging Machine Learning to predict mental wellness from social media text, promoting early intervention and proactive well-being</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="startAssessment()">Get Started</button>
+                    <button class="btn-secondary" onclick="scrollToSection('stats')">Learn More</button>
+                </div>
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">💬</div>
+                        <h3>Mental-Social Features</h3>
+                        <p>Analyze social media text and narratives to identify signs of mental wellness through comprehensive linguistic analysis</p>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">📊</div>
+                        <h3>AI/ML-Trained</h3>
+                        <p>Comprehensive analytical VADER tool coupled with academic research for evidence-based assessments and insights</p>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">📈</div>
+                        <h3>Youth Mental Health</h3>
+                        <p>Supporting youth mental wellness by promoting early intervention and helping young adults understand their wellbeing</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="disclaimer-box">
-            <strong>⚠️ Important Disclaimer:</strong> This tool is not a medical diagnosis. It is designed for educational and self-awareness purposes only. Results are not a substitute for professional medical advice. Consult a mental health professional for concerns.
-        </div>
+        <!-- Stats Section -->
+        <section id="stats" style="background: white;">
+            <h2 class="section-title">Why Mental Wellness Detection Matters</h2>
+            <p class="section-subtitle">Understanding the critical importance of mental health awareness and early detection</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💜</div>
+                    <div class="stat-number">1 in 5</div>
+                    <div class="stat-label">Adults experience mental illness</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-number">50%</div>
+                    <div class="stat-label">Of mental illness begins by age 14</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-number">90%</div>
+                    <div class="stat-label">Are undiagnosed or untreated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌱</div>
+                    <div class="stat-number">60%</div>
+                    <div class="stat-label">Youth with major depression do not receive treatment</div>
+                </div>
+            </div>
+
+            <div class="stats-description">
+                <p style="margin-bottom: 1rem;">Mental health is an essential component of overall well-being, yet it often goes unaddressed and many individuals struggle without proper diagnosis. Early detection can be challenging because symptoms may be subtle or misunderstood.</p>
+                <p style="margin-bottom: 1rem;">This project addresses that gap by leveraging artificial intelligence and machine learning technology to analyze textual data for patterns correlated with mental wellness. Using advanced natural language processing, sentiment analysis, and behavioral insights, our system provides preliminary wellness assessments.</p>
+                <p>Through this implementation we aim to reduce the stigma around mental health conversations while making preliminary mental health screening tools more accessible. Together, we believe technology can play a pivotal role in creating a healthier, more supportive society.</p>
+            </div>
+        </section>
+
+        <!-- Overview Section -->
+        <section id="overview" style="background: var(--bg-light);">
+            <h2 class="section-title">Project Overview</h2>
+            <p class="section-subtitle">An intelligent system that combines AI and research to promote mental wellness</p>
+            
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="overview-icon">🎯</div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Employs cutting-edge natural language processing and machine learning models trained on mental health datasets to analyze user text narratives and identify potential mental health concerns through linguistic patterns.</p>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">📊</div>
+                    <h3>VADER-E Scoring</h3>
+                    <p>Utilizes the industry-standard VADER sentiment analysis tool coupled with our enhanced scoring mechanism to calculate comprehensive mental wellness scores based on text sentiment and emotional indicators.</p>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">💡</div>
+                    <h3>Youth Mental Health</h3>
+                    <p>Specifically engineered to address mental health screening for youth and young adults, promoting early intervention, awareness, and destigmatization of mental health conversations among younger demographics.</p>
+                </div>
+            </div>
+
+            <div class="overview-text">
+                The Mental Wellness Detection System is an intelligent platform created to assess mental health patterns from written user narratives. By analyzing linguistic patterns, emotional sentiment, and behavioral markers in text, this system leverages AI to identify potential mental wellness concerns and provide meaningful insights into an individual's psychological state.
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features">
+            <h2 class="section-title">Key Features</h2>
+            <p class="section-subtitle">Cutting-edge capabilities that make this system effective and reliable</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-badge">AI-Driven</div>
+                    <div class="feature-icon">🔍</div>
+                    <h3>Sentiment Classifier</h3>
+                    <p>Employs trained ensemble machine learning with NLP text features to identify and classify emotional patterns within text narratives with high precision and accuracy.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-badge">Scoring</div>
+                    <div class="feature-icon">📈</div>
+                    <h3>VADER-E Lexicon Scoring</h3>
+                    <p>Comprehensive scoring system using VADER lexicon paired with custom NLP features for enhanced accuracy and reliability.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-badge">Interactive</div>
+                    <div class="feature-icon">🎨</div>
+                    <h3>User-Friendly GUI Integration</h3>
+                    <p>Intuitive graphical interface built with Tkinter and web-based Flask UI to provide seamless interaction and accessibility for all users.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-badge">Web-Scale</div>
+                    <div class="feature-icon">🔐</div>
+                    <h3>Scalable Architecture</h3>
+                    <p>Live cloud deployment with optimized RESTful API architecture that supports concurrent user analysis while ensuring robust data protection.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-badge">Secure</div>
+                    <div class="feature-icon">💾</div>
+                    <h3>Personalized Wellness Reports</h3>
+                    <p>Generates custom health assessment reports with actionable insights, recommendations, and resources based on individual analysis results.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-badge">Real-Time</div>
+                    <div class="feature-icon">⚡</div>
+                    <h3>Advanced NLP Processing</h3>
+                    <p>Sophisticated real-time text processing pipeline to extract meaningful linguistic, syntactic, and emotional features from user input.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section id="architecture" style="background: var(--bg-light);">
+            <h2 class="section-title">Architecture & Workflow</h2>
+            <p class="section-subtitle">End-to-end pipeline from data collection to personalized wellness insights</p>
+            
+            <div class="architecture-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <div class="timeline-content">
+                        <h3>Data Collection</h3>
+                        <p>Gather user narratives via Tkinter GUI and secure web forms using Flask backend for seamless data collection and initial validation</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <div class="timeline-content">
+                        <h3>Text Preprocessing</h3>
+                        <p>Clean, tokenize, and normalize text content through robust NLP pipelines for optimal feature extraction and model performance</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <div class="timeline-content">
+                        <h3>Feature Engineering</h3>
+                        <p>Extract linguistic features, sentiment scores (VADER), readability metrics, and other NLP-derived attributes for model input</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-number">4</div>
+                    <div class="timeline-content">
+                        <h3>ML Model Prediction</h3>
+                        <p>Ensemble of trained classifiers to predict wellness levels, risk categories, and mental health concerns</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <div class="timeline-content">
+                        <h3>Wellness Scoring</h3>
+                        <p>Combined VADER-Enhanced scoring integrated with ML-based risk assessment for comprehensive wellness evaluation</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-number">6</div>
+                    <div class="timeline-content">
+                        <h3>Report Generation</h3>
+                        <p>Create personalized wellness reports with insights, visualizations, recommendations and actionable mental health guidance</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-number">7</div>
+                    <div class="timeline-content">
+                        <h3>Web Interface Display</h3>
+                        <p>Present results using intuitive Flask-built responsive web application accessible on any device with modern browsers</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technologies Section -->
+        <section id="technologies">
+            <h2 class="section-title">Technologies Used</h2>
+            <p class="section-subtitle">Powerful tools and frameworks empowering this cutting-edge wellness system</p>
+            
+            <div class="tech-grid">
+                <div class="tech-box">
+                    <div class="tech-header">🧠 AI & NLP</div>
+                    <ul class="tech-list">
+                        <li>scikit-learn - Model building and validation</li>
+                        <li>NumPy - Numerical computation and data operations</li>
+                        <li>Pandas - Data manipulation and analysis</li>
+                        <li>NLTK - Natural language processing</li>
+                    </ul>
+                </div>
+                <div class="tech-box">
+                    <div class="tech-header">🔧 Backend & Infrastructure</div>
+                    <ul class="tech-list">
+                        <li>Flask - Web application framework</li>
+                        <li>PyTorch - Deep learning and transformers</li>
+                        <li>Tkinter - Desktop GUI development</li>
+                        <li>API Services - RESTful API architecture</li>
+                    </ul>
+                </div>
+                <div class="tech-box">
+                    <div class="tech-header">📊 Data Processing</div>
+                    <ul class="tech-list">
+                        <li>VADER - Sentiment intensity analysis</li>
+                        <li>Regex - Pattern matching and text cleaning</li>
+                        <li>JSON - Data serialization and storage</li>
+                        <li>CSV Processing - Dataset management and export</li>
+                    </ul>
+                </div>
+                <div class="tech-box">
+                    <div class="tech-header">🌐 Deployment</div>
+                    <ul class="tech-list">
+                        <li>Python 3.x - Core programming language</li>
+                        <li>Google Colab - Model training environment</li>
+                        <li>Jupyter Notebooks - Analysis and prototyping</li>
+                        <li>GitHub - Version control and collaboration</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tech-note">
+                <strong>Additional Tools:</strong> Matplotlib/Seaborn for visualizations, Requests for API/HTTP handling, CORS for cross-origin resource sharing and various other libraries for enhanced functionality
+            </div>
+        </section>
+
+        <!-- Sample Output Section -->
+        <section id="sample" style="background: var(--bg-light);">
+            <h2 class="section-title">Sample Output</h2>
+            <p class="section-subtitle">Complete wellness report generated by our system</p>
+            
+            <div class="sample-output">
+                <div class="output-header">
+                    <div class="output-header-item">
+                        <div class="output-header-label">Patient:</div>
+                        <div class="output-header-value">Anonymous</div>
+                    </div>
+                    <div class="output-header-item">
+                        <div class="output-header-label">Report ID:</div>
+                        <div class="output-header-value">#WR-2024-001</div>
+                    </div>
+                    <div class="output-header-item">
+                        <div class="output-header-label">Date Generated:</div>
+                        <div class="output-header-value">Oct 21, 2025</div>
+                    </div>
+                </div>
+
+                <div class="output-score">
+                    <div class="output-score-label">✓ VADER-E Wellness Score</div>
+                    <div class="output-score-value">82/100</div>
+                    <div class="output-score-desc">✓ Overall rating: good mental wellness habits</div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">This user exhibits positive mental wellness patterns, supported by constructive narrative styles and balanced emotional indicators</p>
+                </div>
+
+                <div class="output-breakdown">
+                    <h4 class="breakdown-title">Component Analysis Breakdown</h4>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span>Sentiment Positivity</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span>Emotional Balance</span>
+                            <span>78%</span>
+                        </div>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span>Linguistic Coherence</span>
+                            <span>92%</span>
+                        </div>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="output-insights">
+                    <h4>Key Diagnostic Indicators Detected</h4>
+                    <ul>
+                        <li>Presence of 45% positive emotional words (happy, grateful, excited)</li>
+                        <li>Healthy balance between self-reflection and outward-looking language patterns</li>
+                        <li>Active voice usage indicates engagement and agency in daily activities</li>
+                        <li>Limited use of negative words signifying good problem-solving and sound coping mechanisms</li>
+                    </ul>
+                </div>
+
+                <div class="output-recommendations">
+                    <h4>Personalized Recommendations</h4>
+                    <ul>
+                        <li>Continue maintaining your positive outlook through mindful practices</li>
+                        <li>Keep engaging with supportive communities and positive social connections</li>
+                        <li>Consider journaling regularly to maintain self-awareness and emotional tracking</li>
+                        <li>If you experience changes in mood, consider reaching out to a mental health professional</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results & Impact Section -->
+        <section id="results">
+            <h2 class="section-title">Results & Impact</h2>
+            <p class="section-subtitle">Meaningful outcomes that demonstrate the system's effectiveness</p>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-icon">💜</div>
+                    <div class="result-number">500+</div>
+                    <div class="result-label">Mental Wellness Assessments</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-icon">🎯</div>
+                    <div class="result-number">87%</div>
+                    <div class="result-label">ML Model Accuracy</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-icon">❤️</div>
+                    <div class="result-number">10K+</div>
+                    <div class="result-label">Text Analyzed Successfully</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-icon">🌱</div>
+                    <div class="result-number">95%</div>
+                    <div class="result-label">Processing Time Optimization</div>
+                </div>
+            </div>
+
+            <div class="achievements-box">
+                <h3 class="achievements-title">🌟 Key Achievements</h3>
+                <ul class="achievements-list">
+                    <li>Deployed live web application with healthy performance metrics</li>
+                    <li>Trained and validated ensemble ML pipelines for improved model results with cross-validation</li>
+                    <li>Integrated real-time NLP preprocessing with sentiment analysis and feature extraction pipeline</li>
+                    <li>Offers AI-quantified wellness metrics for tracking and monitoring individual trends</li>
+                    <li>Created sustainable and privacy-first design for sensitive mental health data handling</li>
+                    <li>Enables precise sentiment scoring in measuring emotional states</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Challenges & Learnings Section -->
+        <section id="challenges" style="background: var(--bg-light);">
+            <h2 class="section-title">Challenges & Learnings</h2>
+            <p class="section-subtitle">Key obstacles we overcame and valuable insights gained during development</p>
+            
+            <div class="challenges-grid">
+                <div class="challenges-column">
+                    <h3>⚠️ Technical Challenges</h3>
+                    
+                    <div class="challenge-item">
+                        <div class="challenge-title">Data Quality & Size</div>
+                        <div class="challenge-problem"><strong>Problem:</strong> Limited labeled mental health datasets with balanced class distribution</div>
+                        <div class="challenge-solution"><strong>Solution:</strong> Implemented data augmentation techniques and balanced dataset through SMOTE oversampling and class-based sampling methods</div>
+                    </div>
+
+                    <div class="challenge-item">
+                        <div class="challenge-title">API Rate Limiting</div>
+                        <div class="challenge-problem"><strong>Problem:</strong> API constraints when generating embeddings or calling external NLP services</div>
+                        <div class="challenge-solution"><strong>Solution:</strong> Designed efficient rate management with intelligent caching mechanisms and request throttling strategies</div>
+                    </div>
+
+                    <div class="challenge-item">
+                        <div class="challenge-title">Model Overfitting</div>
+                        <div class="challenge-problem"><strong>Problem:</strong> Initial models showed high training accuracy but poor generalization on test data</div>
+                        <div class="challenge-solution"><strong>Solution:</strong> Applied L2 regularization, cross-validation strategies and ensemble methods to improve model robustness</div>
+                    </div>
+
+                    <div class="challenge-item">
+                        <div class="challenge-title">VADER-E Gap Mapping</div>
+                        <div class="challenge-problem"><strong>Problem:</strong> Standard VADER lexicon insufficient for nuanced mental health language</div>
+                        <div class="challenge-solution"><strong>Solution:</strong> Enhanced custom scoring algorithm combining VADER with domain-adapted mental health lexicon extensions</div>
+                    </div>
+                </div>
+
+                <div class="challenges-column">
+                    <h3>✨ Key Learnings</h3>
+                    
+                    <div class="learning-item">
+                        <div class="learning-title">Deep NLP Understanding</div>
+                        <p class="learning-desc">Gained hands-on experience with sentiment analysis and text feature extraction techniques</p>
+                    </div>
+
+                    <div class="learning-item">
+                        <div class="learning-title">ML Model Evaluation</div>
+                        <p class="learning-desc">Practical experience with cross-validation and hyperparameter tuning best practices</p>
+                    </div>
+
+                    <div class="learning-item">
+                        <div class="learning-title">API Integration</div>
+                        <p class="learning-desc">Rate-limiting strategies with intelligent caching for optimized usage</p>
+                    </div>
+
+                    <div class="learning-item">
+                        <div class="learning-title">Data Quality Importance</div>
+                        <p class="learning-desc">Preprocessing and thorough cleaning are critical for accurate results</p>
+                    </div>
+
+                    <div class="learning-item">
+                        <div class="learning-title">User-Centric AI</div>
+                        <p class="learning-desc">Strong focus on usability and accessibility to maximize real-world impact</p>
+                    </div>
+
+                    <div class="learning-item">
+                        <div class="learning-title">Ethical AI Development</div>
+                        <p class="learning-desc">Privacy protection, bias mitigation and responsible deployment practices essential</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Future Enhancements Section -->
+        <section id="enhancements">
+            <h2 class="section-title">Future Enhancements</h2>
+            <p class="section-subtitle">Planned improvements and features for the next iteration</p>
+            
+            <div class="enhancements-grid">
+                <div class="enhancement-card">
+                    <div class="enhancement-status status-planned">Planned</div>
+                    <h3>🔍 Transformer-Based NLP Models</h3>
+                    <p>Integrate BERT, GPT or T5 for more nuanced contextual understanding and improved accuracy in complex mental health language patterns</p>
+                </div>
+
+                <div class="enhancement-card">
+                    <div class="enhancement-status status-planned">Planned</div>
+                    <h3>💬 ML Quality & Refinement</h3>
+                    <p>Improve dataset quality with more labeled mental health data, expand categories and refine classification algorithms for better precision</p>
+                </div>
+
+                <div class="enhancement-card">
+                    <div class="enhancement-status status-planned">Planned</div>
+                    <h3>🌐 Mobile Compatibility</h3>
+                    <p>Develop native iOS and Android mobile applications with push notifications for regular mental wellness check-ins and tracking features</p>
+                </div>
+
+                <div class="enhancement-card">
+                    <div class="enhancement-status status-progress">In Progress</div>
+                    <h3>🤝 Multilingual Support</h3>
+                    <p>Expand NLP capabilities to handle multiple languages enabling mental health screening for diverse global populations and communities</p>
+                </div>
+
+                <div class="enhancement-card">
+                    <div class="enhancement-status status-planned">Planned</div>
+                    <h3>🎭 Advanced Privacy & Ethics</h3>
+                    <p>Implement differential privacy techniques and federated learning to ensure maximum data protection while maintaining model performance</p>
+                </div>
+
+                <div class="enhancement-card">
+                    <div class="enhancement-status status-progress">In Progress</div>
+                    <h3>📊 Real-time Tracking Dashboard</h3>
+                    <p>Build comprehensive wellness tracking dashboards with trend analysis, historical data visualization and personalized insights over time</p>
+                </div>
+            </div>
+
+            <div class="enhancement-note">
+                <strong>Note:</strong> These features are currently in development and research phases. Implementation timelines depend on testing, validation and ethical review processes to ensure user safety and data privacy are maintained at all times.
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2>Ready to Explore?</h2>
+            <p>Use this interactive system to explore mental wellness. Our comprehensive AI-powered assessment can provide personalized insights designed to support your wellness journey.</p>
+            <div class="cta-buttons">
+                <button class="btn-primary" onclick="startAssessment()">Get Started Today</button>
+                <button class="btn-secondary" onclick="scrollToSection('overview')">Learn More</button>
+            </div>
+            <p class="disclaimer-text">Disclaimer: This system is intended for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis or treatment.</p>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Mental Wellness Detection System</h3>
+                    <p>Using AI and machine learning to promote early detection and intervention in mental health challenges.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a onclick="scrollToSection('overview')">Overview</a></li>
+                        <li><a onclick="scrollToSection('features')">Features</a></li>
+                        <li><a onclick="scrollToSection('architecture')">Architecture</a></li>
+                        <li><a onclick="scrollToSection('technologies')">Technologies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support & Help</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2025 Mental Wellness Detection System. All rights reserved. | Built with ❤️ for mental health awareness
+            </div>
+        </footer>
     </div>
 
     <!-- Assessment Page -->
-    <div class="assessment-page" id="assessmentPage">
+    <section class="assessment-page" id="assessmentPage">
         <div class="assessment-container">
             <div class="assessment-header">
                 <h2>Mental Wellness Assessment</h2>
-                <p>Please answer all questions honestly for accurate results</p>
+                <p>Answer the following questions to receive a personalized wellness report</p>
             </div>
-
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-
             <div class="question-counter" id="questionCounter"></div>
             <div class="question-text" id="questionText"></div>
             <div id="answersContainer"></div>
-
             <div class="navigation">
-                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display: none;">Previous</button>
-                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+                <button class="btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display: none;">Previous</button>
+                <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Report Page -->
-    <div class="report-page" id="reportPage">
+    <section class="report-page" id="reportPage">
         <div class="report-container">
-            <div class="report-header">
+            <div class="assessment-header">
                 <h2>Your Wellness Report</h2>
-                <p>Generated on <span id="reportDate"></span></p>
+                <p>Based on your responses, here is your mental wellness assessment</p>
             </div>
 
-            <div class="overall-score">
-                <h3>Overall Wellness Score</h3>
-                <div class="score-value" id="overallScore">--</div>
-                <div class="score-label" id="overallLabel">--</div>
+            <div class="score-display">
+                <div class="score-label">✓ Mental Wellness Score</div>
+                <div class="score-value-large" id="finalScore">--</div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #065f46;" id="scoreDescription"></p>
             </div>
 
-            <div class="chart-container">
-                <canvas id="radarChart"></canvas>
+            <div class="insights-box">
+                <h4>Key Indicators Detected</h4>
+                <ul id="insightsList"></ul>
             </div>
 
-            <div class="dimensions-grid" id="dimensionsContainer"></div>
-
-            <div class="chart-container">
-                <canvas id="barChart"></canvas>
+            <div class="recommendations-box">
+                <h4>Personalized Recommendations</h4>
+                <ul id="recommendationsList"></ul>
             </div>
 
-            <div class="recommendations" id="recommendationsContainer"></div>
-
-            <div class="resources">
-                <h3>📞 Professional Resources</h3>
-                <p><strong>If you need immediate support:</strong></p>
-                <ul>
-                    <li>National Suicide Prevention Lifeline: <strong>988</strong></li>
-                    <li>Crisis Text Line: Text <strong>"HELLO"</strong> to <strong>741741</strong></li>
-                    <li>SAMHSA National Helpline: <strong>1-800-662-4357</strong></li>
-                </ul>
-                <p style="margin-top: 20px;"><strong>Consider consulting:</strong> A licensed therapist, psychiatrist, or your primary care physician.</p>
+            <div class="disclaimer-box">
+                <h4>⚠️ Important Disclaimer</h4>
+                <p>This assessment is for educational and informational purposes only and does not constitute medical advice, diagnosis, or treatment. If you are experiencing a mental health crisis, please contact a mental health professional or crisis helpline immediately. In the US, call or text 988 for the Suicide & Crisis Lifeline.</p>
             </div>
 
             <div style="text-align: center; margin-top: 2rem;">
-                <button class="btn btn-primary" onclick="restartAssessment()">Take Assessment Again</button>
-                <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+                <button class="btn-primary" onclick="startAssessment()">Take Again</button>
+                <button class="btn-secondary" onclick="showHome()">Back to Home</button>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
         const questions = [
-            { id: 1, category: "demographic", text: "What is your age range?", type: "choice", options: ["18-25", "26-35", "36-45", "46-55", "56+"] },
-            { id: 2, category: "demographic", text: "What is your current relationship status?", type: "choice", options: ["Single", "In a relationship", "Married", "Divorced", "Widowed", "Prefer not to say"] },
-            { id: 3, category: "digital", text: "On average, how many hours per day do you spend on social media?", type: "choice", options: ["Less than 1 hour", "1-2 hours", "2-3 hours", "3-4 hours", "4-5 hours", "More than 5 hours"] },
-            { id: 4, category: "digital", text: "How often do you use social media without a specific purpose?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
-            { id: 5, category: "attention", text: "How often do you get distracted by social media when busy?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
-            { id: 6, category: "digital", text: "Do you feel restless if you haven't used social media in a while?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"] },
-            { id: 7, category: "attention", text: "On a scale of 1 to 5, how easily distracted are you?", type: "scale", scale: 5, labels: ["Not easily", "Somewhat", "Moderately", "Very", "Extremely"] },
-            { id: 8, category: "anxiety", text: "On a scale of 1 to 5, how much are you bothered by worries?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"] },
-            { id: 9, category: "functioning", text: "Do you find it difficult to concentrate on things?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"] },
-            { id: 10, category: "social", text: "How often do you compare yourself to others on social media?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
-            { id: 11, category: "social", text: "How do these comparisons generally make you feel?", type: "scale", scale: 5, labels: ["Very positive", "Positive", "Neutral", "Negative", "Very negative"] },
-            { id: 12, category: "validation", text: "How often do you seek validation from social media?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
-            { id: 13, category: "depression", text: "How often do you feel depressed or down?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
-            { id: 14, category: "interest", text: "How frequently does your interest in daily activities fluctuate?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
-            { id: 15, category: "sleep", text: "How often do you face issues regarding sleep?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
-            { id: 16, category: "energy", text: "How would you rate your energy levels throughout the day?", type: "scale", scale: 5, labels: ["Very low", "Low", "Moderate", "High", "Very high"] },
-            { id: 17, category: "social", text: "How satisfied are you with your social connections?", type: "scale", scale: 5, labels: ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"] },
-            { id: 18, category: "stress", text: "How often do you feel overwhelmed by daily responsibilities?", type: "scale", scale: 5, labels: ["Never", "Rarely", "Sometimes", "Often", "Very often"] },
-            { id: 19, category: "coping", text: "Do you have healthy coping mechanisms for stress?", type: "scale", scale: 5, labels: ["Not at all", "Few", "Some", "Many", "Excellent"] },
-            { id: 20, category: "support", text: "Do you feel you have adequate support when facing difficulties?", type: "scale", scale: 5, labels: ["Not at all", "Slightly", "Moderately", "Mostly", "Completely"] }
+            {
+                question: "How would you describe your overall mood over the past two weeks?",
+                options: ["Very positive and energetic", "Mostly good with occasional low moments", "Neutral, neither particularly good nor bad", "Often sad or anxious", "Consistently low or depressed"]
+            },
+            {
+                question: "How often do you engage in activities you enjoy?",
+                options: ["Daily or almost daily", "Several times a week", "Once a week", "Rarely", "Almost never"]
+            },
+            {
+                question: "How well have you been sleeping recently?",
+                options: ["Very well, 7-9 hours consistently", "Generally good with occasional issues", "Inconsistent sleep patterns", "Frequently poor sleep", "Severe insomnia or oversleeping"]
+            },
+            {
+                question: "How connected do you feel to friends and family?",
+                options: ["Very connected and supported", "Generally connected", "Somewhat isolated", "Often lonely", "Extremely isolated"]
+            },
+            {
+                question: "How do you handle stress in your daily life?",
+                options: ["Very effectively with healthy coping mechanisms", "Generally well with some challenges", "Struggling but managing", "Often overwhelmed", "Unable to cope effectively"]
+            },
+            {
+                question: "How would you rate your energy levels?",
+                options: ["High and consistent", "Good most of the time", "Moderate with fluctuations", "Often low", "Constantly exhausted"]
+            },
+            {
+                question: "How often do you experience feelings of hopelessness or worthlessness?",
+                options: ["Never or almost never", "Rarely", "Sometimes", "Often", "Very frequently"]
+            },
+            {
+                question: "How satisfied are you with your life currently?",
+                options: ["Very satisfied", "Mostly satisfied", "Neutral", "Somewhat dissatisfied", "Very dissatisfied"]
+            }
         ];
 
         let currentQuestion = 0;
-        let responses = {};
-        let assessmentData = { startTime: null, endTime: null, responses: {}, scores: {} };
+        let answers = {};
+
+        function showHome() {
+            document.getElementById('homePage').classList.add('active');
+            document.getElementById('assessmentPage').classList.remove('active');
+            document.getElementById('reportPage').classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToSection(id) {
+            showHome();
+            setTimeout(() => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const navHeight = document.querySelector('nav').offsetHeight;
+                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                    window.scrollTo({ 
+                        top: elementPosition - navHeight - 20, 
+                        behavior: 'smooth' 
+                    });
+                }
+            }, 100);
+        }
 
         function startAssessment() {
-            document.getElementById('landingPage').classList.add('hidden');
-            document.getElementById('assessmentPage').classList.add('active');
-            assessmentData.startTime = new Date();
             currentQuestion = 0;
-            loadQuestion();
+            answers = {};
+            document.getElementById('homePage').classList.remove('active');
+            document.getElementById('assessmentPage').classList.add('active');
+            document.getElementById('reportPage').classList.remove('active');
+            showQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function loadQuestion() {
+        function showQuestion() {
             const q = questions[currentQuestion];
-            const container = document.getElementById('answersContainer');
-
             document.getElementById('questionCounter').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
-            document.getElementById('questionText').textContent = q.text;
-            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
 
-            let html = '';
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '<div class="options"></div>';
+            const optionsDiv = container.querySelector('.options');
 
-            if (q.type === 'choice') {
-                html = '<div class="options">';
-                q.options.forEach((opt, i) => {
-                    const sel = responses[q.id] === i ? 'selected' : '';
-                    html += `<div class="option ${sel}" onclick="selectOption(${q.id}, ${i})">${opt}</div>`;
-                });
-                html += '</div>';
-            } else if (q.type === 'scale') {
-                html = '<div class="scale-options">';
-                for (let i = 1; i <= q.scale; i++) {
-                    const sel = responses[q.id] === i ? 'selected' : '';
-                    html += `<div class="scale-option ${sel}" onclick="selectScale(${q.id}, ${i})">${i}</div>`;
+            q.options.forEach((option, index) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    div.classList.add('selected');
                 }
-                html += '</div>';
-                html += `<div class="scale-labels"><span>${q.labels[0]}</span><span>${q.labels[q.labels.length - 1]}</span></div>`;
-            }
-
-            container.innerHTML = html;
+                div.textContent = option;
+                div.onclick = () => selectAnswer(index);
+                optionsDiv.appendChild(div);
+            });
 
             document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
-            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'Generate Report' : 'Next';
+            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'Get Results' : 'Next';
         }
 
-        function selectOption(qId, optIdx) {
-            responses[qId] = optIdx;
-            document.querySelectorAll('.option').forEach((el, i) => {
-                el.classList.toggle('selected', i === optIdx);
-            });
-        }
-
-        function selectScale(qId, val) {
-            responses[qId] = val;
-            document.querySelectorAll('.scale-option').forEach((el, i) => {
-                el.classList.toggle('selected', i + 1 === val);
+        function selectAnswer(index) {
+            answers[currentQuestion] = index;
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
             });
         }
 
         function nextQuestion() {
-            if (responses[questions[currentQuestion].id] === undefined) {
-                alert('Please answer the question before proceeding.');
+            if (answers[currentQuestion] === undefined) {
+                alert('Please select an answer before continuing.');
                 return;
             }
 
             if (currentQuestion < questions.length - 1) {
                 currentQuestion++;
-                loadQuestion();
+                showQuestion();
             } else {
-                generateReport();
+                showResults();
             }
         }
 
         function previousQuestion() {
             if (currentQuestion > 0) {
                 currentQuestion--;
-                loadQuestion();
+                showQuestion();
             }
         }
 
-        function calculateScores() {
-            const deprQ = [13, 14, 16];
-            const deprSum = deprQ.reduce((s, id) => s + (responses[id] || 0), 0);
-            assessmentData.scores.depression = Math.round((deprSum / (deprQ.length * 5)) * 100);
-
-            const anxQ = [8, 18];
-            const anxSum = anxQ.reduce((s, id) => s + (responses[id] || 0), 0);
-            assessmentData.scores.anxiety = Math.round((anxSum / (anxQ.length * 5)) * 100);
-
-            assessmentData.scores.sleep = Math.round(((6 - (responses[15] || 0)) / 5) * 100);
-
-            const socQ = [10, 11, 17, 20];
-            const socSum = socQ.reduce((s, id) => {
-                let v = responses[id] || 0;
-                if (id === 17 || id === 20) v = 6 - v;
-                return s + v;
-            }, 0);
-            assessmentData.scores.social = Math.round((socSum / (socQ.length * 5)) * 100);
-
-            const funcQ = [7, 9, 19];
-            const funcSum = funcQ.reduce((s, id) => {
-                let v = responses[id] || 0;
-                if (id === 19) v = 6 - v;
-                return s + v;
-            }, 0);
-            assessmentData.scores.functioning = Math.round((funcSum / (funcQ.length * 5)) * 100);
-
-            const digQ = [3, 4, 5, 6, 12];
-            const digSum = digQ.reduce((s, id) => s + (responses[id] || 0), 0);
-            assessmentData.scores.digital = Math.round((digSum / (digQ.length * 5)) * 100);
-
-            const strQ = [18, 19];
-            const strSum = strQ.reduce((s, id) => {
-                let v = responses[id] || 0;
-                if (id === 19) v = 6 - v;
-                return s + v;
-            }, 0);
-            assessmentData.scores.stress = Math.round((strSum / (strQ.length * 5)) * 100);
-
-            const avgNeg = (assessmentData.scores.depression + assessmentData.scores.anxiety +
-                           assessmentData.scores.stress + (100 - assessmentData.scores.sleep) +
-                           assessmentData.scores.digital + assessmentData.scores.functioning) / 6;
-            assessmentData.scores.overall = Math.round(100 - avgNeg);
-        }
-
-        function generateReport() {
-            assessmentData.endTime = new Date();
-            assessmentData.responses = responses;
-            calculateScores();
+        function showResults() {
+            const totalScore = Object.values(answers).reduce((sum, val) => sum + (4 - val), 0);
+            const maxScore = questions.length * 4;
+            const percentage = Math.round((totalScore / maxScore) * 100);
 
             document.getElementById('assessmentPage').classList.remove('active');
             document.getElementById('reportPage').classList.add('active');
+            document.getElementById('finalScore').textContent = percentage + '/100';
 
-            displayReport();
-        }
+            let description, insights, recommendations;
 
-        function displayReport() {
-            const s = assessmentData.scores;
-
-            document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            });
-
-            document.getElementById('overallScore').textContent = s.overall || '--';
-            const lbl = s.overall >= 70 ? 'Excellent Wellness' : s.overall >= 50 ? 'Moderate Wellness' : 'Needs Attention';
-            document.getElementById('overallLabel').textContent = lbl;
-
-            const dims = [
-                { name: 'Depression Resistance', score: 100 - (s.depression || 0), icon: '😔' },
-                { name: 'Anxiety Management', score: 100 - (s.anxiety || 0), icon: '😰' },
-                { name: 'Sleep Quality', score: s.sleep || 0, icon: '😴' },
-                { name: 'Social Connection', score: 100 - (s.social || 0), icon: '👥' },
-                { name: 'Daily Functioning', score: 100 - (s.functioning || 0), icon: '⚡' },
-                { name: 'Digital Wellbeing', score: 100 - (s.digital || 0), icon: '📱' },
-                { name: 'Stress Management', score: 100 - (s.stress || 0), icon: '😓' }
-            ];
-
-            let dimsHTML = '';
-            dims.forEach(d => {
-                dimsHTML += `
-                    <div class="dimension-card">
-                        <h4>${d.icon} ${d.name}</h4>
-                        <div class="dimension-score">${d.score}/100</div>
-                        <p>${d.score >= 70 ? 'Strong' : d.score >= 50 ? 'Moderate' : 'Needs Support'}</p>
-                    </div>`;
-            });
-            document.getElementById('dimensionsContainer').innerHTML = dimsHTML;
-
-            const radarCtx = document.getElementById('radarChart').getContext('2d');
-            new Chart(radarCtx, {
-                type: 'radar',
-                data: {
-                    labels: dims.map(d => d.name),
-                    datasets: [{
-                        label: 'Your Wellness Dimensions',
-                        data: dims.map(d => d.score),
-                        backgroundColor: 'rgba(106, 17, 203, 0.3)',
-                        borderColor: 'rgba(106, 17, 203, 1)',
-                        borderWidth: 3
-                    }]
-                },
-                options: {
-                    scales: { r: { beginAtZero: true, max: 100 } },
-                    plugins: { legend: { display: true } }
-                }
-            });
-
-            const barCtx = document.getElementById('barChart').getContext('2d');
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: dims.map(d => d.name),
-                    datasets: [{
-                        label: 'Wellness Scores',
-                        data: dims.map(d => d.score),
-                        backgroundColor: 'rgba(106, 17, 203, 0.7)',
-                        borderColor: 'rgba(106, 17, 203, 1)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: { y: { beginAtZero: true, max: 100 } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            const recs = generateRecommendations(s, dims);
-            document.getElementById('recommendationsContainer').innerHTML = recs;
-        }
-
-        function generateRecommendations(scores, dims) {
-            let html = '<h3>Personalized Wellness Recommendations</h3><ul>';
-
-            if (scores.overall < 50) {
-                html += '<li>Your wellness score suggests professional support could be beneficial. Consider reaching out to a mental health professional.</li>';
+            if (percentage >= 80) {
+                description = "You exhibit strong mental wellness patterns with positive indicators across multiple dimensions.";
+                insights = [
+                    "High levels of positive emotional expression and engagement",
+                    "Strong social connections and support system",
+                    "Effective stress management and coping strategies",
+                    "Consistent self-care and healthy lifestyle habits"
+                ];
+                recommendations = [
+                    "Continue maintaining your positive outlook through mindful practices",
+                    "Share your wellness strategies with others who might benefit",
+                    "Consider becoming a peer support advocate",
+                    "Regular check-ins to maintain your current wellness level"
+                ];
+            } else if (percentage >= 60) {
+                description = "You show good mental wellness with some areas that could benefit from attention and support.";
+                insights = [
+                    "Generally positive emotional patterns with occasional challenges",
+                    "Adequate social support with room for deeper connections",
+                    "Some effective coping mechanisms in place",
+                    "Balanced approach to self-care with opportunities for improvement"
+                ];
+                recommendations = [
+                    "Develop a consistent self-care routine including exercise and sleep",
+                    "Strengthen your support network through meaningful connections",
+                    "Practice stress-reduction techniques like meditation or journaling",
+                    "Consider speaking with a counselor for additional support"
+                ];
+            } else if (percentage >= 40) {
+                description = "Your responses indicate moderate wellness concerns that warrant attention and proactive support.";
+                insights = [
+                    "Mixed emotional patterns with noticeable stress indicators",
+                    "Some isolation or reduced social engagement",
+                    "Challenges with stress management and coping",
+                    "Disrupted sleep or energy patterns affecting daily function"
+                ];
+                recommendations = [
+                    "Reach out to trusted friends, family, or a mental health professional",
+                    "Establish a daily routine with regular sleep and meal times",
+                    "Engage in at least one enjoyable activity each day",
+                    "Consider professional counseling or therapy services"
+                ];
+            } else {
+                description = "Your responses suggest significant wellness concerns. Professional support is strongly recommended.";
+                insights = [
+                    "Indicators of persistent low mood or emotional distress",
+                    "Notable social isolation or withdrawal",
+                    "Difficulty managing daily stressors and responsibilities",
+                    "Possible symptoms requiring professional evaluation"
+                ];
+                recommendations = [
+                    "Please reach out to a mental health professional immediately",
+                    "Contact a crisis helpline if you're in distress (988 in the US)",
+                    "Talk to someone you trust about how you're feeling",
+                    "Remember that seeking help is a sign of strength, not weakness"
+                ];
             }
 
-            dims.forEach(d => {
-                if (d.score < 50) {
-                    if (d.name.includes('Depression')) html += '<li>Track your mood daily and engage in activities that bring you joy. Consider therapy or counseling.</li>';
-                    if (d.name.includes('Anxiety')) html += '<li>Practice relaxation techniques like deep breathing, meditation, or progressive muscle relaxation.</li>';
-                    if (d.name.includes('Sleep')) html += '<li>Establish a consistent sleep schedule and create a relaxing bedtime routine. Limit screen time before bed.</li>';
-                    if (d.name.includes('Social')) html += '<li>Reach out to friends or family. Consider joining groups or communities that share your interests.</li>';
-                    if (d.name.includes('Functioning')) html += '<li>Break tasks into smaller, manageable steps. Use organizational tools and set realistic daily goals.</li>';
-                    if (d.name.includes('Digital')) html += '<li>Set boundaries for social media use. Try app timers and schedule regular digital detox periods.</li>';
-                    if (d.name.includes('Stress')) html += '<li>Incorporate stress-reduction practices like exercise, mindfulness, or hobbies into your daily routine.</li>';
-                }
-            });
+            document.getElementById('scoreDescription').textContent = description;
 
-            html += '<li>Regular exercise (20-30 minutes daily) can significantly improve mental wellbeing.</li>';
-            html += '<li>Maintain a balanced diet and stay hydrated throughout the day.</li>';
-            html += '<li>Practice gratitude by noting three things you\'re grateful for each day.</li>';
-            html += '<li>Consider mindfulness meditation or yoga to reduce stress and improve focus.</li>';
-            html += '</ul>';
+            const insightsList = document.getElementById('insightsList');
+            insightsList.innerHTML = insights.map(insight => `<li>${insight}</li>`).join('');
 
-            return html;
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = recommendations.map(rec => `<li>${rec}</li>`).join('');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function restartAssessment() {
-            currentQuestion = 0;
-            responses = {};
-            assessmentData = { startTime: null, endTime: null, responses: {}, scores: {} };
-            document.getElementById('reportPage').classList.remove('active');
-            document.getElementById('landingPage').classList.remove('hidden');
-            window.scrollTo(0, 0);
-        }
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = '0 4px 30px rgba(124, 58, 237, 0.2)';
+            } else {
+                nav.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            }
+        });
     </script>
 </body>
 </html>
