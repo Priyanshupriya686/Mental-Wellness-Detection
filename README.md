@@ -218,10 +218,10 @@ python app.py
 
 | Metric | Score |
 |--------|-------|
-| **Accuracy** | 87.5% |
-| **Precision** | 85.2% |
-| **Recall** | 89.1% |
-| **F1-Score** | 87.1% |
+| **Accuracy** | 0.6435 |
+| **Precision** | 0.5536 |
+| **Recall** | 0.6127 |
+| **F1-Score** | 0.6358 |
 
 </div>
 
