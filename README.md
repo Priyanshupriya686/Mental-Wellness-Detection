@@ -117,51 +117,61 @@ The **Warwick–Edinburgh Mental Well-being Scale (WEMWBS)** represents a paradi
 
 ### Prerequisites
 - Python 3.8+
-- Google Colab account (for ngrok deployment)
-- Kaggle API token
-- Reddit API credentials
-- Twitter API credentials
+- Reddit API credentials (set as environment variables)
+- Twitter API credentials (set as environment variables)
 
 ### Installation
 
 ```bash
-# Install required packages
-pip install pandas numpy scikit-learn flask flask-ngrok pyngrok praw tweepy
+# Clone the repository
+git clone https://github.com/your-repo/Mental-Wellness-Detection.git
+cd Mental-Wellness-Detection
 
-# Mount Google Drive
-from google.colab import drive
-drive.mount('/content/drive')
-
-# Upload Kaggle credentials
-from google.colab import files
-files.upload()  # Upload kaggle.json
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### Data Acquisition
+### Environment Setup
+
+Set your API credentials as environment variables:
 
 ```bash
-# Download dataset
-kaggle datasets download -d souvikahmed071/social-media-and-mental-health -p /content/data
-unzip /content/data/social-media-and-mental-health.zip -d /content/data
+export REDDIT_CLIENT_ID="your_reddit_client_id"
+export REDDIT_CLIENT_SECRET="your_reddit_client_secret"
+export TWITTER_BEARER_TOKEN="your_twitter_bearer_token"
 ```
 
-### Model Training
+### Training the Model
 
-```python
-# Load and preprocess data
-# Encode categorical features
-# Train Random Forest model
-# Evaluate performance
-# Generate wellness metrics
-```
-
-### Launch Application
+Train the model using the CLI:
 
 ```bash
-python app.py
+python -m wmdetection.train
 ```
 
-**🎉 Access your public ngrok URL and start analyzing wellness!**
+Or run the example on a subset:
+
+```bash
+python example.py
+```
+
+### Analyzing Social Media Posts
+
+Analyze a user's posts for wellness:
+
+```bash
+python -m wmdetection.infer --platform Reddit --username example_user
+```
+
+### Launching the Web Application
+
+Run the web app:
+
+```bash
+python -m wmdetection.app.web_app
+```
+
+**🎉 Access http://localhost:5000 and start analyzing wellness!**
 
 ---
 
