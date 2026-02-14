@@ -1,0 +1,30 @@
+# Core data science libraries
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+
+# Machine Learning
+xgboost
+
+# Deep Learning (optional - comment out if not needed)
+torch
+torchvision
+torchaudio
+tensorflow
+keras
+
+# NLP
+nltk
+spacy
+transformers
+
+# Web framework
+flask
+flask-ngrok
+pyngrok
+
+# Social media APIs
+praw
+tweepy

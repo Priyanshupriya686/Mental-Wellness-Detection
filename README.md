@@ -125,8 +125,16 @@ The **Warwick–Edinburgh Mental Well-being Scale (WEMWBS)** represents a paradi
 ### Installation
 
 ```bash
-# Install required packages
-pip install pandas numpy scikit-learn flask flask-ngrok pyngrok praw tweepy
+# Clone the repository
+git clone https://github.com/your-repo/Mental-Wellness-Detection.git
+cd Mental-Wellness-Detection
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Alternative: Using Conda
+conda env create -f environment.yml
+conda activate mental-wellness-detection
 
 # Mount Google Drive
 from google.colab import drive
