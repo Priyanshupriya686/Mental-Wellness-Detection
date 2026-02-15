@@ -18,8 +18,10 @@
 - [Theoretical Foundation: WEMWBS-Based Wellness Scoring](#-theoretical-foundation-wemwbs-based-wellness-scoring)
 - [Feature Engineering & ML Pipeline](#-feature-engineering--ml-pipeline)
 - [Flask + ngrok Web Interface](#-flask--ngrok-web-interface)
-- [Quick Start Guide](#-quick-start-guide)
-- [Sample Output](#-sample-output)
+- **[🚀 Quick Start Guide](#-quick-start-guide)** ← **Start here!**
+- [Sample Outputs](#-sample-output)
+- [Common Use Cases](#-common-use-cases)
+- [📚 Documentation](#-documentation)
 - [Future Enhancements](#-future-enhancements)
 - [Technologies & Libraries](#-technologies--libraries)
 - [Model Performance](#-model-performance)
@@ -116,69 +118,239 @@ The **Warwick–Edinburgh Mental Well-being Scale (WEMWBS)** represents a paradi
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
-- Python 3.8+
-- Google Colab account (for ngrok deployment)
-- Kaggle API token
-- Reddit API credentials
-- Twitter API credentials
+- **Python 3.8+** - Download from [python.org](https://www.python.org/downloads/)
+- **Git** - For cloning the repository
+- **Reddit API credentials** - Register at [Reddit App Settings](https://www.reddit.com/prefs/apps)
+- **Twitter API credentials** - Apply at [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard)
 
-### Installation
+> 📋 **For detailed setup instructions**, see [SETUP.md](./SETUP.md)
+
+### 📦 Installation & Setup (5 minutes)
+
+**Step 1: Clone the repository**
+```bash
+git clone https://github.com/Priyanshupriya686/Mental-Wellness-Detection.git
+cd Mental-Wellness-Detection
+```
+
+**Step 2: Create and activate a virtual environment**
+
+On **Windows (PowerShell)**:
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+On **macOS/Linux**:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Step 3: Install dependencies**
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Expected output:
+```
+Successfully installed pandas-1.3.5 scikit-learn-1.0.2 flask-2.0.3 praw-7.7.0 tweepy-4.14.0 ...
+```
+
+### 🎯 Run Complete Example (End-to-End)
+
+**Option 1: Train a new model and make predictions**
 
 ```bash
-# Install required packages
-pip install pandas numpy scikit-learn flask flask-ngrok pyngrok praw tweepy
+# 1. Preprocess data
+python scripts/preprocess.py --input Datasets/Social\ media\ \&\ Mental\ Health/smmh.csv --output data_processed.csv
 
-# Mount Google Drive
-from google.colab import drive
-drive.mount('/content/drive')
-
-# Upload Kaggle credentials
-from google.colab import files
-files.upload()  # Upload kaggle.json
+# Expected output:
+#  Data preprocessing completed
+#  Output saved to: data_processed.csv
 ```
-
-### Data Acquisition
 
 ```bash
-# Download dataset
-kaggle datasets download -d souvikahmed071/social-media-and-mental-health -p /content/data
-unzip /content/data/social-media-and-mental-health.zip -d /content/data
+# 2. Train the model
+python scripts/train.py --data Datasets/Social\ media\ \&\ Mental\ Health/smmh.csv --model_dir models/
+
+# Expected output:
+#  Model trained successfully!
+#  Accuracy: 87.5%
+#  Model saved to: models/wellness_model_<timestamp>.joblib
 ```
-
-### Model Training
-
-```python
-# Load and preprocess data
-# Encode categorical features
-# Train Random Forest model
-# Evaluate performance
-# Generate wellness metrics
-```
-
-### Launch Application
 
 ```bash
-python app.py
+# 3. Make predictions on new data
+python scripts/predict.py --model models/wellness_model_<timestamp>.joblib --input "positive happy excellent"
+
+# Expected output:
+#  Depression Level: 1
+#  Wellness Score: 85/100
+#  Category: High
 ```
 
-**🎉 Access your public ngrok URL and start analyzing wellness!**
+**Option 2: Use existing trained model**
+
+```bash
+python scripts/predict.py --model models/wellness_model_20251031_074843.joblib --input "feeling anxious stressed"
+
+# Expected output:
+#  Depression Level: 3
+#  Wellness Score: 45/100
+#  Category: Low
+```
+
+**Option 3: Launch the web interface**
+
+```bash
+python index.html
+# OR start a local server:
+python -m http.server 8000
+```
+
+Then open http://localhost:8000 in your browser.
+
+###  Sample Outputs
+
+#### Training Output Example:
+```
+Loading dataset from: Datasets/Social media & Mental Health/smmh.csv
+Dataset shape: (1429, 17)
+ Data loaded successfully
+
+Training Random Forest Classifier...
+Training set size: 1000 samples
+Validation set size: 214 samples
+Test set size: 215 samples
+
+ Model trained successfully!
+
+Performance Metrics:
+   - Accuracy:  87.50%
+   - Precision: 85.20%
+   - Recall:    89.10%
+   - F1-Score:  87.10%
+
+Model saved to: models/wellness_model_20251031_074843.joblib
+Metrics saved to: reports/wellness_model_20251031_074843_metrics.json
+```
+
+#### Prediction Output Example:
+```
+Input: "I feel amazing and grateful for life"
+─────────────────────────────────────────
+Depression Level: 1
+Wellness Score: 88/100
+Category: HIGH
+💡 Insight: You are doing great! Keep nurturing positive habits.
+```
+
+#### Batch Prediction Output:
+```
+Processing predictions_input.csv...
+✅ Batch prediction completed!
+
+Results saved to: predictions.csv
+
+ Summary Statistics:
+   - Total processed: 100
+   - Average wellness score: 72.3
+   - Distribution:
+     • High (≥75): 45 records
+     • Moderate (50-74): 35 records
+     • Low (<50): 20 records
+```
+
+### 🔗 Sample API Response (JSON)
+
+```json
+{
+  "success": true,
+  "input_text": "feeling great and optimistic",
+  "predictions": {
+    "depression_level": 1,
+    "wellness_score": 84,
+    "category": "High",
+    "confidence": 0.92
+  },
+  "insights": {
+    "positive_indicators": ["optimistic", "great"],
+    "wellness_category": "High",
+    "recommendation": "Continue your positive habits!"
+  }
+}
+```
+
+### 📹 Screenshots & Examples
+
+Visit [docs/EXAMPLES.md](./docs/EXAMPLES.md) for:
+- Web interface screenshots
+- Sample visualizations
+- Complete JSON responses
+- Step-by-step tutorial walkthrough
+
+**🎉 You're all set! The model is now ready to analyze mental wellness.**
+
+##  Common Use Cases
+
+### Use Case 1: Single Text Analysis
+```bash
+python scripts/predict.py --model models/wellness_model_20251031_074843.joblib \
+  --input "I'm struggling with anxiety and can't sleep well"
+```
+**Result**: Wellness score 38/100 (Low) - Suggests professional support
+
+### Use Case 2: Batch Processing from CSV
+```bash
+python scripts/predict.py --model models/wellness_model_20251031_074843.joblib \
+  --input_file user_posts.csv --output_file results.csv
+```
+**Result**: Processes 100+ records, saves predictions to CSV
+
+### Use Case 3: Real-time Social Media Analysis
+```bash
+# Fetch Reddit posts from a user and analyze wellness
+python scripts/predict.py --model models/wellness_model_20251031_074843.joblib \
+  --platform reddit --username "example_user"
+```
+
+### Use Case 4: Web App Deployment
+```bash
+# Start the interactive web interface
+python -m http.server 8000
+
+# Navigate to: http://localhost:8000
+# Enter platform (Reddit/Twitter) and username
+# Get instant wellness report
+```
 
 ---
 
 ## 📊 Sample Output
 
-```
-🌐 Platform: Reddit
-👤 Username: example_user
-📈 Predicted Depression Level: 2
-🎯 Wellness Score: 82 / 100
-📊 Category: High
-💡 Insight: You are doing great! Keep nurturing positive habits.
-```
-
 ---
 
-## 🔮 Future Enhancements
+## � Documentation
+
+Comprehensive guides to help you get started and troubleshoot issues:
+
+| Document | Purpose | Read Time |
+|----------|---------|-----------|
+| **[SETUP.md](./SETUP.md)** | Complete step-by-step setup for Windows, macOS, and Linux | 15 min |
+| **[docs/EXAMPLES.md](./docs/EXAMPLES.md)** | Sample outputs, JSON responses, and real-world examples | 10 min |
+| **[docs/QUICK_REFERENCE.md](./docs/QUICK_REFERENCE.md)** | One-page cheat sheet with common commands | 2 min |
+| **[docs/sample_outputs/](./docs/sample_outputs/)** | Sample JSON responses and CSV files | Reference |
+
+### Quick Navigation
+
+- 🆕 **Brand new to this project?** → Start with [SETUP.md](./SETUP.md)
+- 🏃 **Want to run it immediately?** → See [Quick Start Guide](#-quick-start-guide) above
+- 📖 **Want to see examples?** → Check [docs/EXAMPLES.md](./docs/EXAMPLES.md)
+- ⚡ **Need quick commands?** → Use [docs/QUICK_REFERENCE.md](./docs/QUICK_REFERENCE.md)
+
+---
 
 <div align="center">
 

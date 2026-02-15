@@ -1,0 +1,68 @@
+{
+  "success": true,
+  "prediction_id": "pred_20251031_150215",
+  "timestamp": "2025-10-31T15:02:15Z",
+  "model_info": {
+    "model_name": "wellness_model_20251031_074843",
+    "model_version": "1.0",
+    "model_accuracy": 0.875
+  },
+  "input": {
+    "text": "I'm feeling amazing today! My life is full of possibilities and I'm grateful for my friends and family.",
+    "text_length": 89,
+    "source": "direct_input"
+  },
+  "prediction": {
+    "depression_level": 1,
+    "depression_level_label": "Minimal",
+    "wellness_score": 87,
+    "category": "HIGH",
+    "confidence": 0.94,
+    "raw_scores": {
+      "depression_level_1": 0.94,
+      "depression_level_2": 0.04,
+      "depression_level_3": 0.01,
+      "depression_level_4": 0.01,
+      "depression_level_5": 0.00
+    }
+  },
+  "analysis": {
+    "sentiment_score": 0.91,
+    "sentiment_label": "Strongly Positive",
+    "emotional_tone": "optimistic",
+    "positive_indicators": [
+      "amazing",
+      "possibilities",
+      "grateful",
+      "friends",
+      "family"
+    ],
+    "negative_indicators": [],
+    "anxiety_level": "very_low",
+    "social_engagement_score": 0.88
+  },
+  "insights": {
+    "summary": "Your wellness indicators are excellent. You're displaying strong positive emotional patterns, gratitude, and healthy social connections.",
+    "category_description": "High wellness - Excellent mental well-being",
+    "key_strengths": [
+      "Positive outlook on life",
+      "Strong social connections",
+      "Expression of gratitude",
+      "Optimistic future focus"
+    ],
+    "recommendations": [
+      "Continue nurturing your positive habits",
+      "Share your positive energy with your community",
+      "Maintain the strong social connections you value",
+      "Consider helping others - it can amplify your well-being"
+    ],
+    "wellness_trajectory": "stable_high",
+    "trend_suggestion": "Keep doing what you're doing!"
+  },
+  "metadata": {
+    "processing_time_ms": 145,
+    "model_version": "1.0",
+    "api_version": "v1"
+  },
+  "disclaimer": "This analysis is for informational and awareness purposes only. It is not a medical diagnosis or professional mental health evaluation. If you are experiencing a mental health crisis, please contact a mental health professional or call 988 (US Suicide & Crisis Lifeline)."
+}

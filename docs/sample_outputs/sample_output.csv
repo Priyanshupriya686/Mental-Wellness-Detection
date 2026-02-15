@@ -1,0 +1,11 @@
+id,user_text,depression_level,depression_level_label,wellness_score,category,confidence
+1,I'm feeling amazing today! My life is full of possibilities,1,Minimal,87,HIGH,0.92
+2,Struggling with anxiety and can't sleep,3,Moderate,42,LOW,0.87
+3,Just had a wonderful time with friends,1,Minimal,85,HIGH,0.91
+4,Everything feels overwhelming right now,4,Severe,38,LOW,0.89
+5,Had a regular productive day at work,2,Mild,68,MODERATE,0.83
+6,Life is pretty good overall,2,Mild,72,MODERATE,0.85
+7,Feeling hopeless about the future,4,Severe,35,LOW,0.88
+8,Grateful for my health and supportive family,1,Minimal,88,HIGH,0.94
+9,Work stress is getting to me,3,Moderate,51,MODERATE,0.82
+10,Feeling peaceful and content today,1,Minimal,84,HIGH,0.90

@@ -1,0 +1,76 @@
+{
+  "success": true,
+  "prediction_id": "pred_20251031_150318",
+  "timestamp": "2025-10-31T15:03:18Z",
+  "model_info": {
+    "model_name": "wellness_model_20251031_074843",
+    "model_version": "1.0",
+    "model_accuracy": 0.875
+  },
+  "input": {
+    "text": "I can't stop worrying. Everything feels hopeless and I haven't been sleeping well. Nothing brings me joy anymore.",
+    "text_length": 108,
+    "source": "direct_input"
+  },
+  "prediction": {
+    "depression_level": 4,
+    "depression_level_label": "Severe",
+    "wellness_score": 35,
+    "category": "LOW",
+    "confidence": 0.91,
+    "raw_scores": {
+      "depression_level_1": 0.02,
+      "depression_level_2": 0.05,
+      "depression_level_3": 0.12,
+      "depression_level_4": 0.71,
+      "depression_level_5": 0.10
+    }
+  },
+  "analysis": {
+    "sentiment_score": 0.08,
+    "sentiment_label": "Strongly Negative",
+    "emotional_tone": "distressed",
+    "positive_indicators": [],
+    "negative_indicators": [
+      "worry",
+      "hopeless",
+      "sleep issues",
+      "anhedonia",
+      "distress"
+    ],
+    "anxiety_level": "very_high",
+    "social_engagement_score": 0.15
+  },
+  "insights": {
+    "summary": "Your wellness score indicates significant emotional distress. The indicators suggest depression symptoms that warrant professional attention.",
+    "category_description": "Low wellness - Significant mental strain detected",
+    "key_concerns": [
+      "Persistent worry and rumination",
+      "Sleep disturbance",
+      "Loss of interest in activities (anhedonia)",
+      "Feelings of hopelessness",
+      "Possible moderate to severe depression"
+    ],
+    "urgent_recommendations": [
+      "🆘 Please reach out to a mental health professional as soon as possible",
+      "Contact your doctor or therapist to discuss your symptoms",
+      "If in crisis, please call 988 (US Suicide & Crisis Lifeline) or text HOME to 741741",
+      "Reach out to trusted friends or family members",
+      "Consider going to an emergency room if you feel unsafe"
+    ],
+    "wellness_trajectory": "declining",
+    "trend_suggestion": "Professional support is recommended - this is not something to handle alone.",
+    "resources": {
+      "us_crisis_hotline": "988",
+      "crisis_text_line": "Text HOME to 741741",
+      "international_resources": "Visit findahelpline.com"
+    }
+  },
+  "metadata": {
+    "processing_time_ms": 152,
+    "model_version": "1.0",
+    "api_version": "v1",
+    "alert_level": "high"
+  },
+  "disclaimer": "This analysis is for informational and awareness purposes only. It is NOT a medical diagnosis. Mental health conditions should be evaluated and treated by qualified mental health professionals. If you are in crisis or having thoughts of self-harm, please contact emergency services or a crisis line immediately. Your well-being matters. Help is available."
+}
