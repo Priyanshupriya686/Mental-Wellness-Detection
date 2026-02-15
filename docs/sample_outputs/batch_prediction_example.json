@@ -1,0 +1,93 @@
+{
+  "success": true,
+  "batch_id": "batch_20251031_160245",
+  "timestamp": "2025-10-31T16:02:45Z",
+  "total_records": 5,
+  "successfully_processed": 5,
+  "failed_records": 0,
+  "predictions": [
+    {
+      "record_id": 1,
+      "input_text": "Had a great day with friends at the park!",
+      "depression_level": 1,
+      "wellness_score": 84,
+      "category": "HIGH",
+      "confidence": 0.89,
+      "processing_status": "success"
+    },
+    {
+      "record_id": 2,
+      "input_text": "Work was stressful today but managing okay",
+      "depression_level": 2,
+      "wellness_score": 61,
+      "category": "MODERATE",
+      "confidence": 0.82,
+      "processing_status": "success"
+    },
+    {
+      "record_id": 3,
+      "input_text": "Feeling really down and exhausted",
+      "depression_level": 3,
+      "wellness_score": 44,
+      "category": "LOW",
+      "confidence": 0.86,
+      "processing_status": "success"
+    },
+    {
+      "record_id": 4,
+      "input_text": "Just another regular day, nothing special",
+      "depression_level": 2,
+      "wellness_score": 58,
+      "category": "MODERATE",
+      "confidence": 0.81,
+      "processing_status": "success"
+    },
+    {
+      "record_id": 5,
+      "input_text": "Grateful for good health and loving family",
+      "depression_level": 1,
+      "wellness_score": 86,
+      "category": "HIGH",
+      "confidence": 0.91,
+      "processing_status": "success"
+    }
+  ],
+  "summary_statistics": {
+    "average_wellness_score": 66.6,
+    "median_wellness_score": 61,
+    "std_dev_wellness_score": 18.4,
+    "average_depression_level": 1.8,
+    "average_confidence": 0.858,
+    "category_distribution": {
+      "HIGH": 2,
+      "MODERATE": 2,
+      "LOW": 1
+    },
+    "wellness_distribution_percentage": {
+      "HIGH (≥75)": 40,
+      "MODERATE (50-74)": 40,
+      "LOW (<50)": 20
+    }
+  },
+  "insights": {
+    "overall_trend": "mixed_stable",
+    "most_common_category": "HIGH_and_MODERATE",
+    "wellness_patterns": {
+      "positive_indicators_frequency": 0.72,
+      "negative_indicators_frequency": 0.28
+    },
+    "group_recommendations": [
+      "Mixed wellness levels detected in this group",
+      "Consider individual support for records with LOW wellness",
+      "Share positive coping strategies among group members",
+      "Regular check-ins recommended for lower-scoring individuals"
+    ]
+  },
+  "model_info": {
+    "model_name": "wellness_model_20251031_074843",
+    "model_version": "1.0",
+    "model_accuracy": 0.875,
+    "processing_time_total_ms": 782
+  },
+  "disclaimer": "These predictions are for informational purposes. For personalized mental health assessment and support, please consult with a qualified mental health professional."
+}
